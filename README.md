@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⌃ RestJobRunner Suite
+# Powershell REST JobRunner Suite
 
 ### Eine asynchrone REST-CRUD-Job-Engine — **vollständig in PowerShell 7+ geschrieben**
 
