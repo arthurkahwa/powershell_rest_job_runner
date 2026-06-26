@@ -144,6 +144,67 @@ rendert diese Spezifikation, der **Mockoon-Mock** implementiert sie als lauffäh
 
 ---
 
+## Projektstruktur
+
+Die beiden Kernkomponenten und ihre Dateien — eine Verantwortung pro Datei, `src/*` in
+Abhängigkeitsreihenfolge per Dot-Sourcing geladen.
+
+### `RestJobRunner/` — die PowerShell-Engine
+
+```text
+RestJobRunner/
+├─ RestJobRunner.psd1          # Manifest · explizite FunctionsToExport · erfordert PS 7.2+
+├─ RestJobRunner.psm1          # lädt src/* per Dot-Sourcing in Abhängigkeitsreihenfolge
+├─ Invoke-Tests.ps1            # Pester-5-Runner (Unit · -Integration · -InstallPester)
+├─ README.md                   # Komponenten-README
+├─ src/
+│  ├─ Enums.ps1                # JobStatus / StepStatus — das Status-Vokabular
+│  ├─ Logging.ps1              # strukturierter Datensatz + Konsolen-/File-Sink + Dispatch
+│  ├─ LoggingSql.ps1           # Append-only-SQL-Server-Sink + Provisionierung
+│  ├─ Retry.ps1                # Invoke-WithRetry + Fehlerklassifikation
+│  ├─ RestClient.ps1           # Invoke-RestApiRequest (CRUD über Invoke-RestMethod)
+│  ├─ JobModel.ps1             # New-RestJob · Steps · Fehler · Get-RestJobReport
+│  ├─ JobStore.ps1             # ConcurrentDictionary + Set-RestJobState (Status-Engpass)
+│  ├─ JobQueue.ps1             # BlockingCollection-Lebenszyklus
+│  ├─ JobProcessor.ps1         # Invoke-RestJob (Pipeline + Retry) — der Kern
+│  ├─ Worker.ps1               # Start/Wait/Stop-RestJobWorkerPool (RunspacePool)
+│  └─ Orchestrator.ps1         # Submit-RestJob · Invoke-RestJobBatch
+├─ sql/
+│  └─ RestJobAuditLog.sql      # Tabelle · Trigger · Least-Privilege-Rolle · Ledger-Variante
+├─ tests/
+│  ├─ Unit/                    # gemockt, offline, schnell (Pester 5)
+│  │  ├─ JobModel.Tests.ps1
+│  │  ├─ JobProcessor.Tests.ps1
+│  │  ├─ JobQueue.Tests.ps1
+│  │  ├─ JobStore.Tests.ps1
+│  │  ├─ Logging.Tests.ps1
+│  │  ├─ RestClient.Tests.ps1
+│  │  ├─ Retry.Tests.ps1
+│  │  └─ Worker.Tests.ps1
+│  └─ Integration/
+│     └─ Crud.Integration.Tests.ps1   # Live-API · Tag: Integration
+├─ demo/
+│  └─ Run-Demo.ps1             # End-to-End-Demo inkl. DeadLettered-Job
+└─ examples/
+   └─ Logging-Examples.ps1     # Logging-Rezepte (File / SQL / Both)
+```
+
+### `RestJobAuditDashboard/` — das .NET-Dashboard
+
+```text
+RestJobAuditDashboard/
+├─ RestJobAuditDashboard.csproj   # Projektdatei (.NET 8)
+├─ Program.cs                     # Minimal-API: /api/config · /api/meta · /api/logs
+├─ appsettings.json               # ConnectionStrings:AuditDb · Audit · Dashboard
+├─ README.md                      # Komponenten-README
+├─ Properties/
+│  └─ launchSettings.json         # Profil · applicationUrl http://localhost:5099
+└─ wwwroot/
+   └─ index.html                  # Single-Page-Client · Demo-Modus · Hell/Dunkel
+```
+
+---
+
 ## Wichtige Design-Entscheidungen
 
 Hier stecken die interessanten, **eindeutig PowerShell-spezifischen** Entscheidungen.
