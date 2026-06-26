@@ -1,0 +1,70 @@
+erDiagram
+    USERS ||--o{ POSTS : writes
+    USERS ||--o{ ALBUMS : owns
+    USERS ||--|| ADDRESS : has
+    USERS ||--|| COMPANY : "works for"
+    ADDRESS ||--|| GEO : "located at"
+    POSTS ||--o{ COMMENTS : receives
+    ALBUMS ||--o{ PHOTOS : contains
+
+    USERS {
+        int id PK
+        string name
+        string username
+        string email
+        string phone
+        string website
+    }
+
+    ADDRESS {
+        int id PK
+        int userId FK
+        string street
+        string suite
+        string city
+        string zipcode
+    }
+
+    GEO {
+        int id PK
+        int addressId FK
+        string lat
+        string lng
+    }
+
+    COMPANY {
+        int id PK
+        int userId FK
+        string name
+        string catchPhrase
+        string bs
+    }
+
+    POSTS {
+        int id PK
+        int userId FK
+        string title
+        string body
+    }
+
+    COMMENTS {
+        int id PK
+        int postId FK
+        string name
+        string email
+        string body
+    }
+
+    ALBUMS {
+        int id PK
+        int userId FK
+        string title
+    }
+
+    PHOTOS {
+        int id PK
+        int albumId FK
+        string title
+        string url
+        string thumbnailUrl
+    }

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 340" width="1120" height="340" role="img" aria-label="Anfrage-Pipeline: Validate, BuildRequest, SendRequest, ParseResponse, PersistResult, mit vier Hinweis-Karten">
+  <defs>
+    <style>
+      text{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+      .box{fill:#fbfdfd;stroke:#cfd9e0;stroke-width:1.5}
+      .box.api{fill:#f2f7fe;stroke:#bcd3f6}
+      .n{font-size:11px;fill:#0b5a54;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+      .nm{font-size:15px;font-weight:650;fill:#0f1720}
+      .d{font-size:11px;fill:#5a6b76;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+      .card{fill:#fafdfd;stroke:#e3eaef;stroke-width:1}
+      .note-title{font-size:13px;font-weight:650;fill:#0f1720}
+      .note-body{font-size:12px;fill:#5a6b76}
+      .arrow{fill:none;stroke:#9fb0bb;stroke-width:2}
+    </style>
+    <marker id="pa" markerWidth="10" markerHeight="10" refX="7.5" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L8.5,4.5 L1,8 Z" fill="#9fb0bb"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="1120" height="340" fill="#e9eef2"/>
+
+  <!-- step boxes -->
+  <g><rect class="box" x="24" y="30" width="188" height="92" rx="10"/>
+    <text class="n" x="42" y="58">step 1</text>
+    <text class="nm" x="42" y="80">Validate</text>
+    <text class="d" x="42" y="100">id / body prüfen</text></g>
+  <g><rect class="box" x="242" y="30" width="188" height="92" rx="10"/>
+    <text class="n" x="260" y="58">step 2</text>
+    <text class="nm" x="260" y="80">BuildRequest</text>
+    <text class="d" x="260" y="100">Methode · URI · Query</text></g>
+  <g><rect class="box api" x="460" y="30" width="188" height="92" rx="10"/>
+    <text class="n" x="478" y="58">step 3</text>
+    <text class="nm" x="478" y="80">SendRequest</text>
+    <text class="d" x="478" y="100">↔ REST-API</text></g>
+  <g><rect class="box" x="678" y="30" width="188" height="92" rx="10"/>
+    <text class="n" x="696" y="58">step 4</text>
+    <text class="nm" x="696" y="80">ParseResponse</text>
+    <text class="d" x="696" y="100">Ergebnis erfassen</text></g>
+  <g><rect class="box" x="896" y="30" width="188" height="92" rx="10"/>
+    <text class="n" x="914" y="58">step 5</text>
+    <text class="nm" x="914" y="80">PersistResult</text>
+    <text class="d" x="914" y="100">Ergebnis speichern</text></g>
+
+  <!-- arrows between steps -->
+  <path class="arrow" d="M214,76 L240,76" marker-end="url(#pa)"/>
+  <path class="arrow" d="M432,76 L458,76" marker-end="url(#pa)"/>
+  <path class="arrow" d="M650,76 L676,76" marker-end="url(#pa)"/>
+  <path class="arrow" d="M868,76 L894,76" marker-end="url(#pa)"/>
+
+  <!-- note cards -->
+  <g><rect class="card" x="24" y="168" width="256" height="148" rx="8"/>
+    <rect x="24" y="168" width="3" height="148" rx="1.5" fill="#6f42c1"/>
+    <text class="note-title" x="42" y="194">Hier passiert die Wiederholung</text>
+    <text class="note-body" x="42" y="218">Transienter Fehler bei SendRequest</text>
+    <text class="note-body" x="42" y="236">(Timeouts, 408/429/5xx) — bis</text>
+    <text class="note-body" x="42" y="254">MaxAttempts mit gedeckeltem</text>
+    <text class="note-body" x="42" y="272">exponentiellem Backoff.</text></g>
+
+  <g><rect class="card" x="296" y="168" width="256" height="148" rx="8"/>
+    <rect x="296" y="168" width="3" height="148" rx="1.5" fill="#cf222e"/>
+    <text class="note-title" x="314" y="194">Schnelles Scheitern</text>
+    <text class="note-body" x="314" y="218">Validierungsfehler bei Validate ist</text>
+    <text class="note-body" x="314" y="236">nicht wiederholbar — direkt auf</text>
+    <text class="note-body" x="314" y="254">Failed, ohne die API zu</text>
+    <text class="note-body" x="314" y="272">kontaktieren.</text></g>
+
+  <g><rect class="card" x="568" y="168" width="256" height="148" rx="8"/>
+    <rect x="568" y="168" width="3" height="148" rx="1.5" fill="#0f766e"/>
+    <text class="note-title" x="586" y="194">Überspringen bei Fehler</text>
+    <text class="note-body" x="586" y="218">Wirft ein Step, werden alle</text>
+    <text class="note-body" x="586" y="236">späteren Steps als Skipped</text>
+    <text class="note-body" x="586" y="254">markiert — der Bericht zeigt, wo</text>
+    <text class="note-body" x="586" y="272">der Job stoppte.</text></g>
+
+  <g><rect class="card" x="840" y="168" width="256" height="148" rx="8"/>
+    <rect x="840" y="168" width="3" height="148" rx="1.5" fill="#0f766e"/>
+    <text class="note-title" x="858" y="194">Jeder Versuch ist sauber</text>
+    <text class="note-body" x="858" y="218">Vor einer Wiederholung werden</text>
+    <text class="note-body" x="858" y="236">alle fünf Steps auf Pending</text>
+    <text class="note-body" x="858" y="254">zurückgesetzt — Start aus</text>
+    <text class="note-body" x="858" y="272">bekanntem Zustand.</text></g>
+</svg>

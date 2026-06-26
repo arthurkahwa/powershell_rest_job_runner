@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JSONPlaceholder CRUD API — Reference</title>
+<style>
+  :root{
+    --bg:#e9eef2; --surface:#ffffff; --ink:#0f1720; --muted:#5a6b76;
+    --line:#d8e0e7; --line-soft:#e7edf1;
+    --accent:#0f766e; --accent-ink:#0b5a54; --accent-wash:#e6f3f1;
+    --get:#1f6feb; --post:#1a7f37; --put:#9a6700; --patch:#6f42c1; --delete:#cf222e;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,"JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --radius:10px; --radius-sm:7px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  a{color:var(--accent-ink);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,.mono{font-family:var(--mono)}
+
+  .topbar{height:4px;background:linear-gradient(90deg,var(--accent),#3aa79c 60%,#7fd0c7)}
+
+  .layout{display:flex;align-items:flex-start;max-width:1240px;margin:0 auto;padding:0 20px;gap:28px}
+
+  /* sidebar */
+  .side{position:sticky;top:0;align-self:flex-start;width:288px;flex:0 0 288px;
+    height:100vh;overflow:auto;padding:22px 6px 60px 0}
+  .brand{display:flex;align-items:baseline;gap:9px;padding:6px 10px 14px}
+  .brand-dot{width:10px;height:10px;border-radius:3px;background:var(--accent);
+    transform:translateY(1px);box-shadow:0 0 0 4px var(--accent-wash)}
+  .brand b{font-size:15px;letter-spacing:-.01em}
+  .filter{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;
+    background:var(--surface);font:inherit;font-size:13px;color:var(--ink);margin:0 0 14px}
+  .filter:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
+  .nav-group{margin-bottom:6px}
+  .nav-group > .nav-title{display:flex;align-items:center;gap:8px;width:100%;text-align:left;
+    background:none;border:0;cursor:pointer;font:inherit;font-weight:650;font-size:12px;
+    letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:9px 10px 6px}
+  .nav-title .count{margin-left:auto;font-weight:600;font-size:11px;color:var(--muted);
+    background:var(--line-soft);border-radius:20px;padding:1px 8px;letter-spacing:0}
+  .nav-link{display:flex;align-items:center;gap:9px;padding:5px 10px;border-radius:7px;
+    cursor:pointer;color:var(--ink)}
+  .nav-link:hover{background:var(--accent-wash);text-decoration:none}
+  .nav-link.active{background:var(--accent-wash)}
+  .verb{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.04em;
+    color:#fff;border-radius:5px;padding:2px 5px;min-width:46px;text-align:center;flex:0 0 auto}
+  .nav-link .path{font-family:var(--mono);font-size:12.5px;color:var(--muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .verb.get{background:var(--get)} .verb.post{background:var(--post)}
+  .verb.put{background:var(--put)} .verb.patch{background:var(--patch)}
+  .verb.delete{background:var(--delete)}
+
+  /* main */
+  .main{flex:1 1 auto;min-width:0;padding:22px 0 120px}
+
+  .hero{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 28px;position:relative;overflow:hidden;margin-bottom:26px}
+  .hero::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;
+    background:linear-gradient(90deg,var(--accent),#7fd0c7)}
+  .eyebrow{font-size:12px;font-weight:650;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--accent-ink)}
+  .hero h1{margin:8px 0 0;font-size:33px;line-height:1.1;letter-spacing:-.02em}
+  .hero .ver{font-family:var(--mono);font-size:12px;color:var(--accent-ink);
+    background:var(--accent-wash);border:1px solid #cfe6e2;border-radius:20px;
+    padding:2px 10px;vertical-align:middle;margin-left:10px;letter-spacing:0}
+  .hero p{color:var(--muted);max-width:70ch;margin:14px 0 0;font-size:14.5px;white-space:pre-line}
+  .stats{display:flex;flex-wrap:wrap;gap:22px;margin-top:20px;padding-top:18px;
+    border-top:1px solid var(--line-soft)}
+  .stat .n{font-size:22px;font-weight:700;letter-spacing:-.01em;font-family:var(--mono)}
+  .stat .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+
+  .server{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:20px;
+    padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius-sm);
+    background:#f8fafb}
+  .server label{font-size:12px;font-weight:650;letter-spacing:.04em;color:var(--muted);
+    text-transform:uppercase}
+  .server select{font:inherit;font-size:13px;font-family:var(--mono);padding:7px 10px;
+    border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink)}
+  .server select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
+  .server .base{font-family:var(--mono);font-size:12.5px;color:var(--accent-ink)}
+
+  .group-h{display:flex;align-items:baseline;gap:12px;margin:34px 2px 12px;scroll-margin-top:14px}
+  .group-h h2{margin:0;font-size:19px;letter-spacing:-.01em;text-transform:capitalize}
+  .group-h .desc{color:var(--muted);font-size:13.5px}
+
+  .op{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    margin:10px 0;overflow:hidden;scroll-margin-top:14px}
+  .op.open{border-color:#c7d2da;box-shadow:0 1px 0 rgba(15,23,32,.03)}
+  .op-head{display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+    background:none;border:0;cursor:pointer;font:inherit;padding:14px 16px}
+  .op-head:hover{background:#fafcfc}
+  .op-head .verb{min-width:62px;font-size:11px;padding:4px 7px}
+  .op-head .opath{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink)}
+  .op-head .opath .base{color:var(--muted);font-weight:400}
+  .op-head .summary{color:var(--muted);font-size:13.5px;margin-left:auto;text-align:right;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46%}
+  .op-head .chev{flex:0 0 auto;color:var(--muted);transition:transform .18s ease;margin-left:4px}
+  .op.open .op-head .chev{transform:rotate(90deg)}
+
+  .op-body{display:none;padding:4px 18px 20px;border-top:1px solid var(--line-soft)}
+  .op.open .op-body{display:block}
+  .op-desc{color:#39474f;font-size:14px;margin:14px 0 4px}
+  .opid{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+
+  .sec-label{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);margin:22px 0 9px}
+
+  table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+  table.tbl th{text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--muted);font-weight:650;padding:7px 10px;border-bottom:1px solid var(--line)}
+  table.tbl td{padding:9px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  table.tbl tr:last-child td{border-bottom:0}
+  .pname{font-family:var(--mono);font-weight:600;font-size:13px}
+  .pin{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--line-soft);
+    border-radius:5px;padding:1px 6px}
+  .req{color:var(--delete);font-size:11px;font-weight:700;margin-left:6px;letter-spacing:.03em}
+  .pdesc{color:var(--muted);font-size:13px}
+  .ptype{font-family:var(--mono);font-size:12.5px;color:var(--accent-ink)}
+  .ptype .fmt{color:var(--muted)}
+  .roflag{font-size:10.5px;color:var(--muted);border:1px solid var(--line);border-radius:5px;
+    padding:0 5px;margin-left:6px;text-transform:uppercase;letter-spacing:.04em}
+  .enum{margin-top:3px}
+  .enum code{font-size:11.5px;background:var(--line-soft);border-radius:5px;padding:1px 6px;
+    margin-right:5px;color:#39474f}
+  .ex{color:var(--muted);font-size:12px;font-family:var(--mono);margin-top:3px}
+
+  .resp{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+  .resp:last-child{border-bottom:0}
+  .status{font-family:var(--mono);font-weight:700;font-size:13px;border-radius:6px;padding:3px 9px;
+    flex:0 0 auto}
+  .status.s2{background:#e7f6ec;color:#0c6b2e} .status.s4{background:#fdecec;color:#a3262f}
+  .resp-main{flex:1 1 auto;min-width:0}
+  .resp-desc{font-size:13.5px}
+  .schema-card{border:1px solid var(--line);border-radius:8px;margin-top:8px;background:#fbfdfd}
+  .schema-card .obj-name{font-family:var(--mono);font-size:12px;color:var(--accent-ink);
+    padding:8px 10px;border-bottom:1px solid var(--line-soft)}
+  .schema-card .obj-name .arr{color:var(--muted)}
+
+  /* models */
+  .model{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    margin:10px 0;overflow:hidden;scroll-margin-top:14px}
+  .model > h3{margin:0;font-family:var(--mono);font-size:14.5px;padding:13px 16px;
+    border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:9px}
+  .model .mdesc{color:var(--muted);font-size:13px;padding:10px 16px 0}
+  .model .tbl-wrap{padding:6px 8px 8px}
+
+  .type-link{font-family:var(--mono);color:var(--accent-ink)}
+  .foot{color:var(--muted);font-size:12.5px;margin-top:40px;padding-top:16px;
+    border-top:1px solid var(--line)}
+
+  .menu-btn{display:none}
+
+  @media (max-width:900px){
+    .layout{flex-direction:column;gap:0;padding:0 14px}
+    .side{position:static;width:100%;flex:none;height:auto;max-height:none;padding:14px 0 4px}
+    .nav-wrap{display:none;max-height:60vh;overflow:auto;border:1px solid var(--line);
+      border-radius:10px;background:var(--surface);padding:8px}
+    .nav-wrap.show{display:block}
+    .menu-btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:13px;
+      font-weight:600;border:1px solid var(--line);background:var(--surface);border-radius:8px;
+      padding:9px 12px;cursor:pointer;color:var(--ink);margin-bottom:10px}
+    .brand{padding:2px 4px 10px}
+    .op-head .summary{display:none}
+    .main{padding-top:6px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="topbar"></div>
+<div class="layout">
+  <aside class="side">
+    <div class="brand"><span class="brand-dot"></span><b id="brandName">API Reference</b></div>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false">☰ Endpoints</button>
+    <div class="nav-wrap" id="navWrap">
+      <input class="filter" id="filter" type="search" placeholder="Filter endpoints…" aria-label="Filter endpoints">
+      <nav id="nav"></nav>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="hero" id="hero"></header>
+    <div id="operations"></div>
+    <h2 class="group-h" id="modelsHeading" style="margin-top:40px"><span style="display:flex;align-items:baseline;gap:12px"><span style="font-size:19px;font-weight:700;letter-spacing:-.01em">Schemas</span><span class="desc" style="color:var(--muted);font-size:13.5px">Resource models referenced above</span></span></h2>
+    <div id="models"></div>
+    <div class="foot" id="foot"></div>
+  </main>
+</div>
+
+<script>
+"use strict";
+const SPEC = {"openapi": "3.0.3", "info": {"title": "JSONPlaceholder CRUD API", "version": "1.0.0", "description": "A typical resource-oriented REST API exposing CRUD operations over five\nresources: posts, comments, albums, photos and users.\n\nThis is the API targeted by the RestJobRunner PowerShell module and reproduced\nlocally by the accompanying Mockoon environment.\n\nTwo servers are provided: the public JSONPlaceholder API (which simulates writes\nwithout persisting them) and a local Mockoon mock (which persists writes in memory\nuntil restarted). Note that list query conventions differ slightly between them:\nJSONPlaceholder uses `_page`/`_limit`/`_sort`/`_order` and bare field filters\n(e.g. `?postId=1`), while the Mockoon CRUD routes use `page`/`limit`/`sort`/`order`\nand `field_eq` filters (e.g. `?postId_eq=1`).", "license": {"name": "MIT", "url": "https://opensource.org/licenses/MIT"}}, "servers": [{"url": "https://jsonplaceholder.typicode.com", "description": "Public JSONPlaceholder API (writes are simulated, not persisted)."}, {"url": "http://localhost:3001", "description": "Local Mockoon mock (full CRUD, persisted in memory until restart)."}], "tags": [{"name": "posts", "description": "Blog posts."}, {"name": "comments", "description": "Comments belonging to posts."}, {"name": "albums", "description": "Photo albums owned by users."}, {"name": "photos", "description": "Photos belonging to albums."}, {"name": "users", "description": "Application users."}], "paths": {"/posts": {"get": {"tags": ["posts"], "summary": "List posts", "description": "Returns all posts. Supports filtering, sorting and pagination via query parameters.", "operationId": "listPosts", "parameters": [{"$ref": "#/components/parameters/UserIdFilter"}, {"$ref": "#/components/parameters/PageParam"}, {"$ref": "#/components/parameters/LimitParam"}, {"$ref": "#/components/parameters/SortParam"}, {"$ref": "#/components/parameters/OrderParam"}], "responses": {"200": {"description": "An array of posts.", "content": {"application/json": {"schema": {"type": "array", "items": {"$ref": "#/components/schemas/Post"}}}}}}}, "post": {"tags": ["posts"], "summary": "Create a post", "description": "Creates a new post. The server assigns the `id`.", "operationId": "createPost", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Post"}}}}, "responses": {"201": {"description": "The created post.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Post"}}}}, "400": {"$ref": "#/components/responses/BadRequest"}}}}, "/posts/{id}": {"parameters": [{"$ref": "#/components/parameters/ResourceId"}], "get": {"tags": ["posts"], "summary": "Get a post by ID", "operationId": "getPost", "responses": {"200": {"description": "The requested post.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Post"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "put": {"tags": ["posts"], "summary": "Replace a post", "description": "Replaces the entire post resource with the supplied representation.", "operationId": "replacePost", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Post"}}}}, "responses": {"200": {"description": "The updated post.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Post"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "patch": {"tags": ["posts"], "summary": "Partially update a post", "description": "Updates only the supplied fields of the post. Any subset of properties may be sent.", "operationId": "updatePost", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Post"}}}}, "responses": {"200": {"description": "The updated post.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Post"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "delete": {"tags": ["posts"], "summary": "Delete a post", "operationId": "deletePost", "responses": {"200": {"description": "The post was deleted. Returns an empty object."}, "404": {"$ref": "#/components/responses/NotFound"}}}}, "/comments": {"get": {"tags": ["comments"], "summary": "List comments", "description": "Returns all comments. Supports filtering, sorting and pagination via query parameters.", "operationId": "listComments", "parameters": [{"$ref": "#/components/parameters/PostIdFilter"}, {"$ref": "#/components/parameters/PageParam"}, {"$ref": "#/components/parameters/LimitParam"}, {"$ref": "#/components/parameters/SortParam"}, {"$ref": "#/components/parameters/OrderParam"}], "responses": {"200": {"description": "An array of comments.", "content": {"application/json": {"schema": {"type": "array", "items": {"$ref": "#/components/schemas/Comment"}}}}}}}, "post": {"tags": ["comments"], "summary": "Create a comment", "description": "Creates a new comment. The server assigns the `id`.", "operationId": "createComment", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Comment"}}}}, "responses": {"201": {"description": "The created comment.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Comment"}}}}, "400": {"$ref": "#/components/responses/BadRequest"}}}}, "/comments/{id}": {"parameters": [{"$ref": "#/components/parameters/ResourceId"}], "get": {"tags": ["comments"], "summary": "Get a comment by ID", "operationId": "getComment", "responses": {"200": {"description": "The requested comment.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Comment"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "put": {"tags": ["comments"], "summary": "Replace a comment", "description": "Replaces the entire comment resource with the supplied representation.", "operationId": "replaceComment", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Comment"}}}}, "responses": {"200": {"description": "The updated comment.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Comment"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "patch": {"tags": ["comments"], "summary": "Partially update a comment", "description": "Updates only the supplied fields of the comment. Any subset of properties may be sent.", "operationId": "updateComment", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Comment"}}}}, "responses": {"200": {"description": "The updated comment.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Comment"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "delete": {"tags": ["comments"], "summary": "Delete a comment", "operationId": "deleteComment", "responses": {"200": {"description": "The comment was deleted. Returns an empty object."}, "404": {"$ref": "#/components/responses/NotFound"}}}}, "/albums": {"get": {"tags": ["albums"], "summary": "List albums", "description": "Returns all albums. Supports filtering, sorting and pagination via query parameters.", "operationId": "listAlbums", "parameters": [{"$ref": "#/components/parameters/UserIdFilter"}, {"$ref": "#/components/parameters/PageParam"}, {"$ref": "#/components/parameters/LimitParam"}, {"$ref": "#/components/parameters/SortParam"}, {"$ref": "#/components/parameters/OrderParam"}], "responses": {"200": {"description": "An array of albums.", "content": {"application/json": {"schema": {"type": "array", "items": {"$ref": "#/components/schemas/Album"}}}}}}}, "post": {"tags": ["albums"], "summary": "Create a album", "description": "Creates a new album. The server assigns the `id`.", "operationId": "createAlbum", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Album"}}}}, "responses": {"201": {"description": "The created album.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Album"}}}}, "400": {"$ref": "#/components/responses/BadRequest"}}}}, "/albums/{id}": {"parameters": [{"$ref": "#/components/parameters/ResourceId"}], "get": {"tags": ["albums"], "summary": "Get a album by ID", "operationId": "getAlbum", "responses": {"200": {"description": "The requested album.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Album"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "put": {"tags": ["albums"], "summary": "Replace a album", "description": "Replaces the entire album resource with the supplied representation.", "operationId": "replaceAlbum", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Album"}}}}, "responses": {"200": {"description": "The updated album.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Album"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "patch": {"tags": ["albums"], "summary": "Partially update a album", "description": "Updates only the supplied fields of the album. Any subset of properties may be sent.", "operationId": "updateAlbum", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Album"}}}}, "responses": {"200": {"description": "The updated album.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Album"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "delete": {"tags": ["albums"], "summary": "Delete a album", "operationId": "deleteAlbum", "responses": {"200": {"description": "The album was deleted. Returns an empty object."}, "404": {"$ref": "#/components/responses/NotFound"}}}}, "/photos": {"get": {"tags": ["photos"], "summary": "List photos", "description": "Returns all photos. Supports filtering, sorting and pagination via query parameters.", "operationId": "listPhotos", "parameters": [{"$ref": "#/components/parameters/AlbumIdFilter"}, {"$ref": "#/components/parameters/PageParam"}, {"$ref": "#/components/parameters/LimitParam"}, {"$ref": "#/components/parameters/SortParam"}, {"$ref": "#/components/parameters/OrderParam"}], "responses": {"200": {"description": "An array of photos.", "content": {"application/json": {"schema": {"type": "array", "items": {"$ref": "#/components/schemas/Photo"}}}}}}}, "post": {"tags": ["photos"], "summary": "Create a photo", "description": "Creates a new photo. The server assigns the `id`.", "operationId": "createPhoto", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Photo"}}}}, "responses": {"201": {"description": "The created photo.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Photo"}}}}, "400": {"$ref": "#/components/responses/BadRequest"}}}}, "/photos/{id}": {"parameters": [{"$ref": "#/components/parameters/ResourceId"}], "get": {"tags": ["photos"], "summary": "Get a photo by ID", "operationId": "getPhoto", "responses": {"200": {"description": "The requested photo.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Photo"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "put": {"tags": ["photos"], "summary": "Replace a photo", "description": "Replaces the entire photo resource with the supplied representation.", "operationId": "replacePhoto", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Photo"}}}}, "responses": {"200": {"description": "The updated photo.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Photo"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "patch": {"tags": ["photos"], "summary": "Partially update a photo", "description": "Updates only the supplied fields of the photo. Any subset of properties may be sent.", "operationId": "updatePhoto", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Photo"}}}}, "responses": {"200": {"description": "The updated photo.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Photo"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "delete": {"tags": ["photos"], "summary": "Delete a photo", "operationId": "deletePhoto", "responses": {"200": {"description": "The photo was deleted. Returns an empty object."}, "404": {"$ref": "#/components/responses/NotFound"}}}}, "/users": {"get": {"tags": ["users"], "summary": "List users", "description": "Returns all users. Supports filtering, sorting and pagination via query parameters.", "operationId": "listUsers", "parameters": [{"$ref": "#/components/parameters/PageParam"}, {"$ref": "#/components/parameters/LimitParam"}, {"$ref": "#/components/parameters/SortParam"}, {"$ref": "#/components/parameters/OrderParam"}], "responses": {"200": {"description": "An array of users.", "content": {"application/json": {"schema": {"type": "array", "items": {"$ref": "#/components/schemas/User"}}}}}}}, "post": {"tags": ["users"], "summary": "Create a user", "description": "Creates a new user. The server assigns the `id`.", "operationId": "createUser", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}}, "responses": {"201": {"description": "The created user.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}}, "400": {"$ref": "#/components/responses/BadRequest"}}}}, "/users/{id}": {"parameters": [{"$ref": "#/components/parameters/ResourceId"}], "get": {"tags": ["users"], "summary": "Get a user by ID", "operationId": "getUser", "responses": {"200": {"description": "The requested user.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "put": {"tags": ["users"], "summary": "Replace a user", "description": "Replaces the entire user resource with the supplied representation.", "operationId": "replaceUser", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}}, "responses": {"200": {"description": "The updated user.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "patch": {"tags": ["users"], "summary": "Partially update a user", "description": "Updates only the supplied fields of the user. Any subset of properties may be sent.", "operationId": "updateUser", "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}}, "responses": {"200": {"description": "The updated user.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/User"}}}}, "404": {"$ref": "#/components/responses/NotFound"}}}, "delete": {"tags": ["users"], "summary": "Delete a user", "operationId": "deleteUser", "responses": {"200": {"description": "The user was deleted. Returns an empty object."}, "404": {"$ref": "#/components/responses/NotFound"}}}}}, "components": {"schemas": {"Post": {"type": "object", "required": ["userId", "title", "body"], "properties": {"id": {"type": "integer", "format": "int64", "readOnly": true, "example": 1, "description": "Server-assigned unique identifier."}, "userId": {"type": "integer", "format": "int64", "example": 1, "description": "Id of the user who authored the post."}, "title": {"type": "string", "example": "sunt aut facere repellat provident"}, "body": {"type": "string", "example": "quia et suscipit\nsuscipit recusandae consequuntur"}}}, "Comment": {"type": "object", "required": ["postId", "name", "email", "body"], "properties": {"id": {"type": "integer", "format": "int64", "readOnly": true, "example": 1, "description": "Server-assigned unique identifier."}, "postId": {"type": "integer", "format": "int64", "example": 1, "description": "Id of the post this comment belongs to."}, "name": {"type": "string", "example": "id labore ex et quam laborum"}, "email": {"type": "string", "format": "email", "example": "[email protected]"}, "body": {"type": "string", "example": "laudantium enim quasi est quidem magnam"}}}, "Album": {"type": "object", "required": ["userId", "title"], "properties": {"id": {"type": "integer", "format": "int64", "readOnly": true, "example": 1, "description": "Server-assigned unique identifier."}, "userId": {"type": "integer", "format": "int64", "example": 1, "description": "Id of the user who owns the album."}, "title": {"type": "string", "example": "quidem molestiae enim"}}}, "Photo": {"type": "object", "required": ["albumId", "title", "url", "thumbnailUrl"], "properties": {"id": {"type": "integer", "format": "int64", "readOnly": true, "example": 1, "description": "Server-assigned unique identifier."}, "albumId": {"type": "integer", "format": "int64", "example": 2, "description": "Id of the album this photo belongs to."}, "title": {"type": "string", "example": "accusamus beatae ad facilis cum similique"}, "url": {"type": "string", "format": "uri", "example": "https://via.placeholder.com/600/92c952"}, "thumbnailUrl": {"type": "string", "format": "uri", "example": "https://via.placeholder.com/150/92c952"}}}, "User": {"type": "object", "required": ["name", "username", "email"], "properties": {"id": {"type": "integer", "format": "int64", "readOnly": true, "example": 1, "description": "Server-assigned unique identifier."}, "name": {"type": "string", "example": "Leanne Graham"}, "username": {"type": "string", "example": "Bret"}, "email": {"type": "string", "format": "email", "example": "[email protected]"}, "address": {"$ref": "#/components/schemas/Address"}, "phone": {"type": "string", "example": "1-770-736-8031 x56442"}, "website": {"type": "string", "example": "hildegard.org"}, "company": {"$ref": "#/components/schemas/Company"}}}, "Address": {"type": "object", "properties": {"street": {"type": "string", "example": "Kulas Light"}, "suite": {"type": "string", "example": "Apt. 556"}, "city": {"type": "string", "example": "Gwenborough"}, "zipcode": {"type": "string", "example": "92998-3874"}, "geo": {"$ref": "#/components/schemas/Geo"}}}, "Geo": {"type": "object", "description": "Geo-coordinates as strings, matching the JSONPlaceholder shape.", "properties": {"lat": {"type": "string", "example": "-37.3159"}, "lng": {"type": "string", "example": "81.1496"}}}, "Company": {"type": "object", "properties": {"name": {"type": "string", "example": "Romaguera-Crona"}, "catchPhrase": {"type": "string", "example": "Multi-layered client-server neural-net"}, "bs": {"type": "string", "example": "harness real-time e-markets"}}}, "Error": {"type": "object", "properties": {"message": {"type": "string", "example": "Resource not found"}}}}, "parameters": {"ResourceId": {"name": "id", "in": "path", "required": true, "description": "Numeric identifier of the resource.", "schema": {"type": "integer", "format": "int64", "minimum": 1}}, "UserIdFilter": {"name": "userId", "in": "query", "required": false, "description": "Filter the collection by owning user id.", "schema": {"type": "integer", "format": "int64"}}, "PostIdFilter": {"name": "postId", "in": "query", "required": false, "description": "Filter the collection by parent post id.", "schema": {"type": "integer", "format": "int64"}}, "AlbumIdFilter": {"name": "albumId", "in": "query", "required": false, "description": "Filter the collection by parent album id.", "schema": {"type": "integer", "format": "int64"}}, "PageParam": {"name": "_page", "in": "query", "required": false, "description": "1-based page number (JSONPlaceholder pagination). The Mockoon mock uses `page`.", "schema": {"type": "integer", "minimum": 1}}, "LimitParam": {"name": "_limit", "in": "query", "required": false, "description": "Maximum items per page (JSONPlaceholder pagination). The Mockoon mock uses `limit`.", "schema": {"type": "integer", "minimum": 1}}, "SortParam": {"name": "_sort", "in": "query", "required": false, "description": "Property name to sort by. The Mockoon mock uses `sort`.", "schema": {"type": "string"}}, "OrderParam": {"name": "_order", "in": "query", "required": false, "description": "Sort direction. The Mockoon mock uses `order`.", "schema": {"type": "string", "enum": ["asc", "desc"], "default": "asc"}}}, "responses": {"NotFound": {"description": "The resource was not found.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}, "BadRequest": {"description": "The request payload was invalid.", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}}}};
+
+const METHODS = ["get","post","put","patch","delete"];
+const $ = (t,c,h)=>{const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const slug = s => s.replace(/[^a-z0-9]+/gi,"-").replace(/^-|-$/g,"").toLowerCase();
+
+function resolveRef(ref){
+  const parts = ref.replace(/^#\//,"").split("/");
+  let cur = SPEC;
+  for(const p of parts){ cur = cur && cur[p]; }
+  return cur || {};
+}
+const deref = o => (o && o.$ref) ? resolveRef(o.$ref) : (o||{});
+const refName = o => o && o.$ref ? o.$ref.split("/").pop() : null;
+
+/* ---- type rendering ---------------------------------------------------- */
+function typeLabel(schema){
+  if(!schema) return '<span class="ptype">any</span>';
+  if(schema.$ref){ const n=refName(schema); return `<a class="type-link" href="#model-${n}">${n}</a>`; }
+  if(schema.type==="array"){
+    const items=schema.items||{};
+    if(items.$ref){ const n=refName(items); return `<span class="ptype">array&lt;</span><a class="type-link" href="#model-${n}">${n}</a><span class="ptype">&gt;</span>`; }
+    return `<span class="ptype">array&lt;${esc((items.type||"any"))}&gt;</span>`;
+  }
+  let base = schema.type || "object";
+  let fmt = schema.format ? `<span class="fmt"> &lt;${esc(schema.format)}&gt;</span>` : "";
+  return `<span class="ptype">${esc(base)}${fmt}</span>`;
+}
+
+/* property table for an object schema */
+function propsTable(schema){
+  const s = deref(schema);
+  const required = new Set(s.required||[]);
+  const props = s.properties||{};
+  const names = Object.keys(props);
+  if(!names.length) return null;
+  const tbl = $("table","tbl");
+  tbl.innerHTML = "<thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>";
+  const tb = $("tbody");
+  for(const name of names){
+    const p = props[name];
+    const pd = deref(p);
+    const tr = $("tr");
+    const ro = p.readOnly || pd.readOnly ? '<span class="roflag">read-only</span>' : "";
+    const reqMark = required.has(name) ? '<span class="req">required</span>' : "";
+    let extra = "";
+    const enums = (pd.enum||p.enum);
+    if(enums){ extra += '<div class="enum">'+enums.map(v=>`<code>${esc(v)}</code>`).join("")+'</div>'; }
+    const example = (p.example!==undefined?p.example:pd.example);
+    if(example!==undefined && typeof example!=="object"){
+      const ev = String(example).split("\n")[0];
+      extra += `<div class="ex">e.g. ${esc(ev.length>54?ev.slice(0,54)+"…":ev)}</div>`;
+    }
+    const desc = esc(p.description||pd.description||"");
+    tr.innerHTML =
+      `<td><span class="pname">${esc(name)}</span>${reqMark}</td>`+
+      `<td>${typeLabel(p)}${ro}</td>`+
+      `<td><span class="pdesc">${desc}</span>${extra}</td>`;
+    tb.appendChild(tr);
+  }
+  tbl.appendChild(tb);
+  return tbl;
+}
+
+/* a schema as a card (used for request body + responses) */
+function schemaCard(schema){
+  if(!schema || (!schema.$ref && !schema.type && !schema.properties)) return null;
+  const card = $("div","schema-card");
+  let title, body;
+  if(schema.type==="array"){
+    const items = schema.items||{};
+    const n = refName(items);
+    title = n ? `<span class="arr">array of</span> <a class="type-link" href="#model-${n}">${n}</a>`
+              : `array&lt;${esc(items.type||"any")}&gt;`;
+    body = propsTable(items);
+  } else {
+    const n = refName(schema);
+    title = n ? `<a class="type-link" href="#model-${n}">${n}</a>` : "object";
+    body = propsTable(schema);
+  }
+  card.appendChild($("div","obj-name",title));
+  if(body){ const w=$("div"); w.style.padding="2px 6px 4px"; w.appendChild(body); card.appendChild(w); }
+  return card;
+}
+
+/* ---- operations -------------------------------------------------------- */
+function collectOps(){
+  const byTag = {};
+  for(const path of Object.keys(SPEC.paths)){
+    const item = SPEC.paths[path];
+    const pathParams = item.parameters||[];
+    for(const m of METHODS){
+      if(!item[m]) continue;
+      const op = item[m];
+      const tag = (op.tags&&op.tags[0]) || "default";
+      (byTag[tag] = byTag[tag]||[]).push({path, method:m, op, pathParams});
+    }
+  }
+  return byTag;
+}
+
+function paramRows(params){
+  const tbl = $("table","tbl");
+  tbl.innerHTML="<thead><tr><th>Name</th><th>In</th><th>Type</th><th>Description</th></tr></thead>";
+  const tb=$("tbody");
+  for(const raw of params){
+    const p = deref(raw);
+    const tr=$("tr");
+    const req = p.required ? '<span class="req">required</span>' : "";
+    let extra="";
+    const sc=p.schema||{};
+    if(sc.enum){ extra='<div class="enum">'+sc.enum.map(v=>`<code>${esc(v)}</code>`).join("")+'</div>'; }
+    tr.innerHTML =
+      `<td><span class="pname">${esc(p.name)}</span>${req}</td>`+
+      `<td><span class="pin">${esc(p.in)}</span></td>`+
+      `<td>${typeLabel(sc)}</td>`+
+      `<td><span class="pdesc">${esc(p.description||"")}</span>${extra}</td>`;
+    tb.appendChild(tr);
+  }
+  tbl.appendChild(tb);
+  return tbl;
+}
+
+function buildOp(entry){
+  const {path, method, op, pathParams} = entry;
+  const id = "op-"+method+"-"+slug(path);
+  const wrap = $("div","op"); wrap.id=id;
+
+  const head = $("button","op-head");
+  head.setAttribute("aria-expanded","false");
+  head.innerHTML =
+    `<span class="verb ${method}">${method.toUpperCase()}</span>`+
+    `<span class="opath"><span class="base" data-base></span>${esc(path)}</span>`+
+    `<span class="summary">${esc(op.summary||"")}</span>`+
+    `<span class="chev">▸</span>`;
+  head.addEventListener("click",()=>toggleOp(wrap));
+  wrap.appendChild(head);
+
+  const body = $("div","op-body");
+  if(op.summary){ const h=$("div"); h.style.marginTop="14px"; h.innerHTML=`<strong>${esc(op.summary)}</strong>`; body.appendChild(h); }
+  if(op.description){ body.appendChild($("div","op-desc",esc(op.description))); }
+  if(op.operationId){ body.appendChild($("div","opid","operationId: "+esc(op.operationId))); }
+
+  const params = [].concat(pathParams||[], op.parameters||[]);
+  if(params.length){
+    body.appendChild($("div","sec-label","Parameters"));
+    body.appendChild(paramRows(params));
+  }
+
+  if(op.requestBody){
+    const rb = deref(op.requestBody);
+    const sc = rb.content && rb.content["application/json"] && rb.content["application/json"].schema;
+    body.appendChild($("div","sec-label","Request body"+(rb.required?" · required":"")));
+    const card = schemaCard(sc);
+    if(card) body.appendChild(card); else body.appendChild($("div","pdesc","application/json"));
+  }
+
+  body.appendChild($("div","sec-label","Responses"));
+  const responses = op.responses||{};
+  for(const code of Object.keys(responses)){
+    const r = deref(responses[code]);
+    const row = $("div","resp");
+    const cls = code[0]==="2"?"s2":(code[0]==="4"?"s4":"");
+    row.appendChild($("span","status "+cls,esc(code)));
+    const main = $("div","resp-main");
+    main.appendChild($("div","resp-desc",esc(r.description||"")));
+    const sc = r.content && r.content["application/json"] && r.content["application/json"].schema;
+    const card = schemaCard(sc);
+    if(card) main.appendChild(card);
+    row.appendChild(main);
+    body.appendChild(row);
+  }
+
+  wrap.appendChild(body);
+  return wrap;
+}
+
+function toggleOp(wrap, force){
+  const open = force!==undefined ? force : !wrap.classList.contains("open");
+  wrap.classList.toggle("open",open);
+  const head = wrap.querySelector(".op-head");
+  if(head) head.setAttribute("aria-expanded",String(open));
+}
+
+/* ---- render everything ------------------------------------------------- */
+function render(){
+  document.title = (SPEC.info&&SPEC.info.title||"API")+" — Reference";
+  document.getElementById("brandName").textContent = SPEC.info.title||"API Reference";
+
+  // hero
+  const ops = collectOps();
+  const opCount = Object.values(ops).reduce((a,l)=>a+l.length,0);
+  const tags = (SPEC.tags && SPEC.tags.length) ? SPEC.tags.map(t=>t.name) : Object.keys(ops);
+  const schemaCount = Object.keys((SPEC.components&&SPEC.components.schemas)||{}).length;
+  const hero = document.getElementById("hero");
+  hero.innerHTML =
+    `<div class="eyebrow">OpenAPI ${esc(SPEC.openapi)} · REST reference</div>`+
+    `<h1>${esc(SPEC.info.title)}<span class="ver">v${esc(SPEC.info.version)}</span></h1>`+
+    `<p>${esc(SPEC.info.description||"")}</p>`+
+    `<div class="stats">`+
+      stat(tags.length,"Resources")+stat(opCount,"Operations")+
+      stat(schemaCount,"Schemas")+stat((SPEC.servers||[]).length,"Servers")+
+    `</div>`+
+    serverPicker();
+  wireServerPicker();
+
+  // nav + operation groups
+  const nav = document.getElementById("nav");
+  const opsRoot = document.getElementById("operations");
+  for(const tag of tags){
+    const list = ops[tag]; if(!list||!list.length) continue;
+    const meta = (SPEC.tags||[]).find(t=>t.name===tag)||{};
+
+    // nav group
+    const g = $("div","nav-group");
+    const gt = $("button","nav-title",`${esc(tag)}<span class="count">${list.length}</span>`);
+    gt.addEventListener("click",()=>document.getElementById("grp-"+slug(tag)).scrollIntoView({behavior:"smooth",block:"start"}));
+    g.appendChild(gt);
+    for(const e of list){
+      const link = $("div","nav-link");
+      link.dataset.target = "op-"+e.method+"-"+slug(e.path);
+      link.dataset.search = (e.method+" "+e.path+" "+(e.op.summary||"")).toLowerCase();
+      link.innerHTML = `<span class="verb ${e.method}">${e.method.toUpperCase()}</span><span class="path">${esc(e.path)}</span>`;
+      link.addEventListener("click",()=>{
+        const el=document.getElementById(link.dataset.target);
+        toggleOp(el,true); el.scrollIntoView({behavior:"smooth",block:"start"});
+        document.querySelectorAll(".nav-link.active").forEach(n=>n.classList.remove("active"));
+        link.classList.add("active");
+        document.getElementById("navWrap").classList.remove("show");
+        document.getElementById("menuBtn").setAttribute("aria-expanded","false");
+      });
+      g.appendChild(link);
+    }
+    nav.appendChild(g);
+
+    // operations group
+    const gh = $("h2","group-h"); gh.id="grp-"+slug(tag);
+    gh.innerHTML = `<h2 style="margin:0;font-size:19px">${esc(tag)}</h2>`+(meta.description?`<span class="desc">${esc(meta.description)}</span>`:"");
+    opsRoot.appendChild(gh);
+    for(const e of list) opsRoot.appendChild(buildOp(e));
+  }
+
+  // models
+  const models = document.getElementById("models");
+  const schemas = (SPEC.components&&SPEC.components.schemas)||{};
+  for(const name of Object.keys(schemas)){
+    const sc = schemas[name];
+    const m = $("div","model"); m.id="model-"+name;
+    m.appendChild($("h3",null,`<span class="brand-dot" style="box-shadow:none;width:8px;height:8px"></span>${esc(name)}`));
+    if(sc.description) m.appendChild($("div","mdesc",esc(sc.description)));
+    const tbl = propsTable(sc);
+    if(tbl){ const w=$("div","tbl-wrap"); w.appendChild(tbl); m.appendChild(w); }
+    else { m.appendChild($("div","mdesc",typeLabel(sc))); }
+    models.appendChild(m);
+  }
+
+  // footer
+  const lic = SPEC.info.license;
+  document.getElementById("foot").innerHTML =
+    `${esc(SPEC.info.title)} v${esc(SPEC.info.version)} — generated from the OpenAPI ${esc(SPEC.openapi)} document.`+
+    (lic?` Licensed under ${esc(lic.name)}.`:"");
+
+  // open the first operation for orientation
+  const first = document.querySelector(".op");
+  if(first) toggleOp(first,true);
+}
+
+function stat(n,l){ return `<div class="stat"><div class="n">${esc(n)}</div><div class="l">${esc(l)}</div></div>`; }
+
+function serverPicker(){
+  const servers = SPEC.servers||[];
+  if(!servers.length) return "";
+  const opts = servers.map((s,i)=>`<option value="${esc(s.url)}">${esc(s.url)}</option>`).join("");
+  return `<div class="server"><label for="srv">Base URL</label>`+
+    `<select id="srv">${opts}</select>`+
+    `<span class="base" id="srvDesc">${esc(servers[0].description||"")}</span></div>`;
+}
+function wireServerPicker(){
+  const sel = document.getElementById("srv");
+  if(!sel) return;
+  const apply = ()=>{
+    const base = sel.value.replace(/\/$/,"");
+    document.querySelectorAll("[data-base]").forEach(el=>el.textContent=base);
+    const s=(SPEC.servers||[]).find(x=>x.url===sel.value);
+    const d=document.getElementById("srvDesc"); if(d&&s) d.textContent=s.description||"";
+  };
+  sel.addEventListener("change",apply);
+  apply();
+}
+
+/* filter */
+document.getElementById("filter").addEventListener("input",e=>{
+  const q=e.target.value.trim().toLowerCase();
+  document.querySelectorAll(".nav-link").forEach(l=>{
+    l.style.display = (!q || l.dataset.search.includes(q)) ? "" : "none";
+  });
+  document.querySelectorAll(".nav-group").forEach(g=>{
+    const any=[...g.querySelectorAll(".nav-link")].some(l=>l.style.display!=="none");
+    g.style.display = any ? "" : "none";
+  });
+});
+
+/* mobile menu */
+document.getElementById("menuBtn").addEventListener("click",function(){
+  const w=document.getElementById("navWrap");
+  const show=w.classList.toggle("show");
+  this.setAttribute("aria-expanded",String(show));
+});
+
+try{ render(); }
+catch(err){
+  document.getElementById("operations").innerHTML =
+    '<div class="op" style="padding:18px"><strong>Could not render the spec.</strong><div class="pdesc" style="margin-top:6px">'+esc(err&&err.message||err)+'</div></div>';
+  console.error(err);
+}
+</script>
+</body>
+</html>

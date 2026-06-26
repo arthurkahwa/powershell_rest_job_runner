@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 580" width="1120" height="580" role="img" aria-label="Runtime data flow: producer to queue to runspace worker pool to REST API to terminal outcomes, over a shared job store">
+  <defs>
+    <style>
+      text{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+      .lbl{font-size:14px;font-weight:650;fill:#0f1720}
+      .lbl-sm{font-size:13px;font-weight:650;fill:#0f1720}
+      .sub{font-size:11px;fill:#5a6b76;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+      .edge-lbl{font-size:11px;fill:#5a6b76}
+      .edge-lbl.em{fill:#6f42c1}
+      .comp rect{fill:#fff;stroke:#cfd9e0;stroke-width:1.5}
+      .comp .chip{fill:#0f766e}
+      .flow{fill:none;stroke:#9fb0bb;stroke-width:2}
+      .branch{fill:none;stroke-width:1.8;stroke-dasharray:5 5}
+      .branch.violet{stroke:#6f42c1}.branch.amber{stroke:#9a6700}.branch.red{stroke:#cf222e}.branch.gray{stroke:#6b7785}
+      .shared{fill:none;stroke:#6b7785;stroke-width:1.4;stroke-dasharray:3 5;opacity:.7}
+      .term-green{fill:#e7f6ec;stroke:#1a7f37!important}
+      .term-red{fill:#fdecec;stroke:#cf222e!important}
+      .term-amber{fill:#fbf3e2;stroke:#9a6700!important}
+      .term-gray{fill:#eef1f3;stroke:#6b7785!important}
+      .t-green{fill:#1a7f37}.t-red{fill:#cf222e}.t-amber{fill:#9a6700}.t-gray{fill:#6b7785}
+    </style>
+    <marker id="ah" markerWidth="10" markerHeight="10" refX="7.5" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L8.5,4.5 L1,8 Z" fill="#9fb0bb"/></marker>
+    <marker id="ah-violet" markerWidth="10" markerHeight="10" refX="7.5" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L8.5,4.5 L1,8 Z" fill="#6f42c1"/></marker>
+    <marker id="ah-amber" markerWidth="10" markerHeight="10" refX="7.5" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L8.5,4.5 L1,8 Z" fill="#9a6700"/></marker>
+    <marker id="ah-red" markerWidth="10" markerHeight="10" refX="7.5" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L8.5,4.5 L1,8 Z" fill="#cf222e"/></marker>
+    <marker id="ah-gray" markerWidth="10" markerHeight="10" refX="7.5" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L8.5,4.5 L1,8 Z" fill="#6b7785"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="1120" height="580" fill="#e9eef2"/>
+
+  <!-- shared store backplane -->
+  <g class="comp"><title>Job Store — per Referenz über alle Worker-Runspaces geteilt; einzige maßgebliche Quelle für den Job-Status</title>
+    <rect x="28" y="496" width="878" height="58" rx="10"/>
+    <circle class="chip" cx="48" cy="516" r="5"/>
+    <text class="lbl-sm" x="62" y="520">Job Store</text>
+    <text class="sub" x="150" y="520">ConcurrentDictionary&lt;id, job&gt; · per Referenz über Runspaces geteilt · einzige maßgebliche Quelle</text>
+  </g>
+  <path class="shared" d="M112,316 L112,496"/>
+  <path class="shared" d="M565,448 L565,496"/>
+  <path class="shared" d="M816,330 L816,496"/>
+  <text class="sub" x="600" y="472" fill="#6b7785">read / write</text>
+
+  <!-- producer -->
+  <g class="comp"><title>Producer — erzeugt Job-Datensätze und übergibt sie (Status Pending → Queued)</title>
+    <rect x="28" y="224" width="168" height="92" rx="11"/>
+    <circle class="chip" cx="48" cy="250" r="5"/>
+    <text class="lbl" x="62" y="254">Producer</text>
+    <text class="sub" x="44" y="280">Submit-RestJob /</text>
+    <text class="sub" x="44" y="296">Invoke-RestJobBatch</text>
+  </g>
+
+  <!-- queue -->
+  <g class="comp"><title>Queue — hält nur Job-IDs; Worker verbrauchen via GetConsumingEnumerable()</title>
+    <rect x="256" y="224" width="140" height="92" rx="11"/>
+    <circle class="chip" cx="276" cy="250" r="5"/>
+    <text class="lbl" x="290" y="254">Queue</text>
+    <text class="sub" x="272" y="280">BlockingCollection</text>
+    <text class="sub" x="272" y="296">&lt;id&gt; · FIFO</text>
+  </g>
+
+  <!-- workers -->
+  <g class="comp"><title>Worker 1 — ein Runspace, der das Modul importiert und Invoke-RestJobWorker ausführt</title>
+    <rect x="470" y="92" width="190" height="84" rx="11"/>
+    <circle class="chip" cx="490" cy="116" r="5"/>
+    <text class="lbl-sm" x="504" y="120">Worker 1</text>
+    <text class="sub" x="486" y="144">runspace ·</text>
+    <text class="sub" x="486" y="160">Invoke-RestJobWorker</text>
+  </g>
+  <g class="comp"><title>Worker 2 — ein Runspace, der die nächste Job-ID zieht und verarbeitet</title>
+    <rect x="470" y="228" width="190" height="84" rx="11"/>
+    <circle class="chip" cx="490" cy="252" r="5"/>
+    <text class="lbl-sm" x="504" y="256">Worker 2</text>
+    <text class="sub" x="486" y="280">runspace ·</text>
+    <text class="sub" x="486" y="296">Invoke-RestJobWorker</text>
+  </g>
+  <g class="comp"><title>Worker 3 — jede Job-ID wird von genau einem Worker verbraucht, Datensätze mutieren nie nebenläufig</title>
+    <rect x="470" y="364" width="190" height="84" rx="11"/>
+    <circle class="chip" cx="490" cy="388" r="5"/>
+    <text class="lbl-sm" x="504" y="392">Worker 3</text>
+    <text class="sub" x="486" y="416">runspace ·</text>
+    <text class="sub" x="486" y="432">Invoke-RestJobWorker</text>
+  </g>
+  <text class="edge-lbl" x="470" y="470" fill="#5a6b76">Worker-Pool · RunspacePool (N Runspaces)</text>
+
+  <!-- REST API -->
+  <g class="comp"><title>REST-API — der SendRequest-Step ruft sie auf; zwei austauschbare Backends</title>
+    <rect x="726" y="210" width="180" height="120" rx="11"/>
+    <circle class="chip" cx="746" cy="236" r="5"/>
+    <text class="lbl" x="760" y="240">REST-API</text>
+    <text class="sub" x="742" y="266">GET·POST·PUT·</text>
+    <text class="sub" x="742" y="282">PATCH·DELETE</text>
+    <rect x="742" y="294" width="148" height="22" rx="6" fill="#f2f7fe" stroke="#bcd3f6"/>
+    <text class="sub" x="750" y="309" fill="#1f6feb">jsonplaceholder · Mockoon</text>
+  </g>
+
+  <!-- terminal outcomes -->
+  <g class="comp"><title>Succeeded — alle fünf Steps abgeschlossen</title>
+    <rect class="term-green" x="952" y="104" width="150" height="62" rx="10"/>
+    <text class="lbl-sm t-green" x="968" y="132">Succeeded</text>
+    <text class="sub t-green" x="968" y="150">alle Steps fertig</text></g>
+  <g class="comp"><title>DeadLettered — wiederholbarer Fehler, alle Versuche erschöpft</title>
+    <rect class="term-amber" x="952" y="186" width="150" height="62" rx="10"/>
+    <text class="lbl-sm t-amber" x="968" y="214">DeadLettered</text>
+    <text class="sub t-amber" x="968" y="232">Retries erschöpft</text></g>
+  <g class="comp"><title>Failed — nicht wiederholbarer Fehler, etwa Validierung</title>
+    <rect class="term-red" x="952" y="268" width="150" height="62" rx="10"/>
+    <text class="lbl-sm t-red" x="968" y="296">Failed</text>
+    <text class="sub t-red" x="968" y="314">nicht wiederholbar</text></g>
+  <g class="comp"><title>Cancelled — out-of-band via Set-RestJobStatus gesetzt</title>
+    <rect class="term-gray" x="952" y="350" width="150" height="62" rx="10"/>
+    <text class="lbl-sm t-gray" x="968" y="378">Cancelled</text>
+    <text class="sub t-gray" x="968" y="396">manuell</text></g>
+
+  <!-- happy-path connectors -->
+  <path class="flow" d="M196,270 L256,270" marker-end="url(#ah)"/>
+  <path class="flow" d="M396,270 C433,270 433,134 470,134" marker-end="url(#ah)"/>
+  <path class="flow" d="M396,270 L470,270" marker-end="url(#ah)"/>
+  <path class="flow" d="M396,270 C433,270 433,406 470,406" marker-end="url(#ah)"/>
+  <path class="flow" d="M660,134 C693,134 693,270 726,270" marker-end="url(#ah)"/>
+  <path class="flow" d="M660,270 L726,270" marker-end="url(#ah)"/>
+  <path class="flow" d="M660,406 C693,406 693,270 726,270" marker-end="url(#ah)"/>
+  <path class="flow" d="M906,255 C929,255 929,135 952,135" marker-end="url(#ah)"/>
+
+  <!-- retry loop -->
+  <path class="branch violet" d="M800,210 C742,150 700,120 662,112" marker-end="url(#ah-violet)"/>
+  <text class="edge-lbl em" x="690" y="138">Retry · Backoff</text>
+
+  <!-- dead-letter & fail branches -->
+  <path class="branch amber" d="M906,298 C928,298 930,217 952,217" marker-end="url(#ah-amber)"/>
+  <path class="branch red" d="M906,312 C928,312 930,299 952,299" marker-end="url(#ah-red)"/>
+  <!-- cancelled -->
+  <path class="branch gray" d="M832,381 L952,381" marker-end="url(#ah-gray)"/>
+  <text class="edge-lbl" x="836" y="373" fill="#6b7785">Set-RestJobStatus</text>
+</svg>

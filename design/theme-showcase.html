@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Console theme · RestJobRunner</title>
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('rjr-theme');
+      document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+  })();
+</script>
+<style>
+  :root{
+    --bg:#0a0f14; --surface:#0f1820; --surface-2:#14202a; --elev:#172734;
+    --border:#21323d; --border-soft:#1a2832;
+    --text:#e2ecf2; --muted:#8198a6; --faint:#5d7180;
+    --accent:#2dd4bf; --accent-ink:#06231f; --accent-soft:#123734;
+    --err:#f87171; --warn:#f5b94a; --info:#4cb7e8; --debug:#8092a0;
+    --err-bg:#2a1417; --warn-bg:#2a2010; --info-bg:#0e2533; --debug-bg:#1a2530;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,"JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --shadow:0 1px 0 rgba(255,255,255,.02),0 10px 30px rgba(0,0,0,.4);
+  }
+  [data-theme="light"]{
+    --bg:#eef2f4; --surface:#ffffff; --surface-2:#f4f8f9; --elev:#ffffff;
+    --border:#d6dee3; --border-soft:#e7eef1;
+    --text:#16222b; --muted:#566671; --faint:#8696a0;
+    --accent:#0f766e; --accent-ink:#ffffff; --accent-soft:#dcefec;
+    --err:#d11a2a; --warn:#a8650a; --info:#0b6ea8; --debug:#5a6b75;
+    --err-bg:#fbeaec; --warn-bg:#f8efdd; --info-bg:#e3f0f8; --debug-bg:#eef2f4;
+    --shadow:0 1px 2px rgba(16,24,32,.06),0 10px 30px rgba(16,24,32,.07);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px 110px}
+
+  /* header */
+  header.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:16px;
+    padding:13px 22px;background:color-mix(in srgb,var(--surface) 86%,transparent);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+  .bar-inner{max-width:1080px;margin:0 auto;width:100%;display:flex;align-items:center;gap:16px}
+  .live{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.14em;color:var(--accent);font-weight:600}
+  .live .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);animation:pulse 2.4s ease-out infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}
+    70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
+  header h1{margin:0;font-size:15px;font-weight:650;letter-spacing:-.01em}
+  header .sub{font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .spacer{flex:1}
+  .ctrl{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 12px;background:var(--surface-2);
+    border:1px solid var(--border);border-radius:8px;color:var(--text);font:inherit;font-size:13px;cursor:pointer}
+  .ctrl:hover{border-color:var(--accent)}
+  .ctrl:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .ctrl.icon-only{padding:0;width:34px;justify-content:center}
+  .ctrl .ico{width:15px;height:15px;color:var(--muted)}
+
+  /* hero */
+  .hero{padding:40px 0 8px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+  .hero h2{margin:10px 0 0;font-size:34px;line-height:1.07;letter-spacing:-.025em;max-width:18ch}
+  .hero p{color:var(--muted);max-width:60ch;margin:13px 0 0;font-size:15px}
+
+  section{margin-top:40px}
+  .sec-label{display:flex;align-items:baseline;gap:12px;margin-bottom:16px;
+    padding-bottom:9px;border-bottom:1px solid var(--border)}
+  .sec-label .t{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .sec-label .d{font-size:13px;color:var(--faint)}
+
+  .group-title{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--faint);margin:18px 0 9px}
+
+  /* swatches */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .sw{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface)}
+  .sw .chip{height:62px}
+  .sw .meta{padding:8px 10px}
+  .sw .nm{font-family:var(--mono);font-size:11px;color:var(--text)}
+  .sw .hex{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase}
+  .sw.line .chip{position:relative}
+  .sw.line .chip::after{content:"";position:absolute;inset:14px;border:1px dashed var(--text);opacity:.5;border-radius:6px}
+
+  .sev-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .sev{display:flex;align-items:center;gap:12px;border:1px solid var(--border);border-radius:10px;
+    padding:12px 14px;background:var(--surface)}
+  .sev .dotbig{width:34px;height:34px;border-radius:9px;flex:none}
+  .sev .l{font-family:var(--mono);font-size:12px;color:var(--text)}
+  .sev .h{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+  /* type */
+  .type-card{border:1px solid var(--border);border-radius:12px;padding:20px 22px;background:var(--surface);margin-bottom:14px}
+  .type-card .role{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .specimen-display{font-size:30px;font-weight:680;letter-spacing:-.025em;margin-top:6px}
+  .specimen-h{font-size:16px;font-weight:650;margin-top:6px}
+  .specimen-body{font-size:14px;color:var(--text);margin-top:6px;max-width:62ch}
+  .specimen-data{font-family:var(--mono);font-size:13px;color:var(--text);margin-top:6px;font-variant-numeric:tabular-nums}
+  .stack{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:10px}
+
+  /* component gallery */
+  .panel{border:1px solid var(--border);border-radius:12px;background:var(--surface);overflow:hidden;margin-top:14px}
+  .panel .ph{padding:11px 16px;border-bottom:1px solid var(--border-soft);font-family:var(--mono);
+    font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .panel .pb{padding:18px 16px}
+  .row-demo{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+
+  .badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;font-weight:600;
+    padding:3px 9px;border-radius:999px}
+  .badge .bd{width:6px;height:6px;border-radius:50%}
+  .b-Error{color:var(--err);background:var(--err-bg)} .b-Error .bd{background:var(--err)}
+  .b-Warn{color:var(--warn);background:var(--warn-bg)} .b-Warn .bd{background:var(--warn)}
+  .b-Info{color:var(--info);background:var(--info-bg)} .b-Info .bd{background:var(--info)}
+  .b-Debug{color:var(--debug);background:var(--debug-bg)} .b-Debug .bd{background:var(--debug)}
+
+  .stats{display:flex;gap:10px;flex-wrap:wrap}
+  .stat{flex:1;min-width:130px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;
+    padding:11px 13px;position:relative;overflow:hidden}
+  .stat .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .stat .v{font-size:24px;font-weight:680;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:1px}
+  .stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--faint)}
+  .stat.total::before{background:var(--accent)}
+  .stat.error::before{background:var(--err)} .stat.error .v{color:var(--err)}
+  .stat.warn::before{background:var(--warn)}  .stat.warn .v{color:var(--warn)}
+  .stat.info::before{background:var(--info)}  .stat.info .v{color:var(--info)}
+
+  .spark{display:flex;align-items:flex-end;gap:2px;height:30px}
+  .spark .b{width:5px;min-height:2px;background:var(--accent);opacity:.55;border-radius:1px}
+  .spark .b.hot{background:var(--err);opacity:.85}
+
+  .search{position:relative;max-width:380px;width:100%}
+  .search input{width:100%;height:38px;padding:0 12px 0 38px;background:var(--bg);border:1px solid var(--border);
+    border-radius:9px;color:var(--text);font:inherit;font-size:14px}
+  .search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .search input::placeholder{color:var(--faint)}
+  .search .si{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--faint)}
+  select.ctrl{appearance:none;padding-right:28px;background-image:
+    linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+    background-position:calc(100% - 15px) 15px,calc(100% - 10px) 15px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+
+  .progress{height:2px;background:var(--border-soft);border-radius:2px;overflow:hidden;max-width:380px}
+  .progress .fill{height:100%;width:30%;background:var(--accent);opacity:.75}
+
+  /* sample table */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{text-align:left;font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);background:var(--surface);border-bottom:1px solid var(--border);
+    padding:9px 12px;white-space:nowrap}
+  tbody td{padding:8px 12px;border-bottom:1px solid var(--border-soft);vertical-align:top}
+  tbody tr.row{border-left:3px solid transparent}
+  tbody tr.row:hover{background:var(--surface-2)}
+  tr.row.lvl-Error{border-left-color:var(--err)} tr.row.lvl-Warn{border-left-color:var(--warn)}
+  tr.row.lvl-Info{border-left-color:var(--info)} tr.row.lvl-Debug{border-left-color:var(--debug)}
+  tr.row.is-new{animation:flashrow 1.8s ease-out}
+  @keyframes flashrow{0%{background:var(--accent-soft)}100%{background:transparent}}
+  .c-time{font-family:var(--mono);color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .c-msg{color:var(--text)}
+  .src .nm{color:var(--text)} .src .meta{font-family:var(--mono);font-size:11px;color:var(--faint)}
+  .http{font-family:var(--mono);font-size:12px;white-space:nowrap}
+  .http .m{color:var(--muted)} .http .sc{font-weight:600;margin:0 5px}
+  .http .sc.s2{color:var(--info)} .http .sc.s4{color:var(--warn)} .http .sc.s5{color:var(--err)}
+  .http .dur{color:var(--faint)}
+
+  /* detail panel sample */
+  .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px 24px;
+    background:var(--surface-2);border:1px solid var(--border-soft);border-radius:10px;padding:14px 16px;margin-top:14px}
+  .kv .pk{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .kv .pv{font-family:var(--mono);font-size:12.5px;color:var(--text);word-break:break-word}
+
+  /* token code */
+  pre.tokens{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;
+    overflow:auto;font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.7}
+  pre.tokens .c{color:var(--accent)} pre.tokens .k{color:var(--muted)}
+
+  footer{margin-top:46px;color:var(--faint);font-size:12.5px;font-family:var(--mono)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+  @media (max-width:680px){.hero h2{font-size:26px}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-inner">
+    <span class="live"><span class="dot"></span>LIVE</span>
+    <div>
+      <h1>Console theme</h1>
+      <div class="sub">restjobrunner · audit dashboard</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="ctrl icon-only" id="themeBtn" title="Toggle light / dark" aria-label="Toggle theme">
+      <svg class="ico" id="themeIco" viewBox="0 0 16 16" fill="currentColor"></svg>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Design tokens · dark default</div>
+    <h2>The audit console, distilled to its parts.</h2>
+    <p>A dark-first operator aesthetic: a steady teal carries the chrome and controls, while four
+    severity colors — red, amber, sky, slate — are reserved to mean something (the log level), never
+    decoration. Data is set in monospace for scanning and alignment; chrome is a humanist sans. Toggle
+    the theme top-right; every hex below updates to the active mode.</p>
+  </div>
+
+  <!-- PALETTE -->
+  <section>
+    <div class="sec-label"><span class="t">Palette</span><span class="d">live values for the current theme</span></div>
+
+    <div class="group-title">Surfaces</div>
+    <div class="swatches">
+      <div class="sw" data-var="--bg"><div class="chip" style="background:var(--bg)"></div><div class="meta"><div class="nm">--bg</div><div class="hex"></div></div></div>
+      <div class="sw" data-var="--surface"><div class="chip" style="background:var(--surface)"></div><div class="meta"><div class="nm">--surface</div><div class="hex"></div></div></div>
+      <div class="sw" data-var="--surface-2"><div class="chip" style="background:var(--surface-2)"></div><div class="meta"><div class="nm">--surface-2</div><div class="hex"></div></div></div>
+      <div class="sw" data-var="--elev"><div class="chip" style="background:var(--elev)"></div><div class="meta"><div class="nm">--elev</div><div class="hex"></div></div></div>
+    </div>
+
+    <div class="group-title">Ink</div>
+    <div class="swatches">
+      <div class="sw" data-var="--text"><div class="chip" style="background:var(--text)"></div><div class="meta"><div class="nm">--text</div><div class="hex"></div></div></div>
+      <div class="sw" data-var="--muted"><div class="chip" style="background:var(--muted)"></div><div class="meta"><div class="nm">--muted</div><div class="hex"></div></div></div>
+      <div class="sw" data-var="--faint"><div class="chip" style="background:var(--faint)"></div><div class="meta"><div class="nm">--faint</div><div class="hex"></div></div></div>
+    </div>
+
+    <div class="group-title">Lines &amp; accent</div>
+    <div class="swatches">
+      <div class="sw line" data-var="--border"><div class="chip" style="background:var(--surface)"></div><div class="meta"><div class="nm">--border</div><div class="hex"></div></div></div>
+      <div class="sw line" data-var="--border-soft"><div class="chip" style="background:var(--surface)"></div><div class="meta"><div class="nm">--border-soft</div><div class="hex"></div></div></div>
+      <div class="sw" data-var="--accent"><div class="chip" style="background:var(--accent)"></div><div class="meta"><div class="nm">--accent</div><div class="hex"></div></div></div>
+      <div class="sw" data-var="--accent-soft"><div class="chip" style="background:var(--accent-soft)"></div><div class="meta"><div class="nm">--accent-soft</div><div class="hex"></div></div></div>
+    </div>
+
+    <div class="group-title">Severity — color &amp; tint</div>
+    <div class="sev-row">
+      <div class="sev"><span class="dotbig" style="background:var(--err)"></span><div><div class="l">Error</div><div class="h" data-var="--err"></div></div></div>
+      <div class="sev"><span class="dotbig" style="background:var(--warn)"></span><div><div class="l">Warn</div><div class="h" data-var="--warn"></div></div></div>
+      <div class="sev"><span class="dotbig" style="background:var(--info)"></span><div><div class="l">Info</div><div class="h" data-var="--info"></div></div></div>
+      <div class="sev"><span class="dotbig" style="background:var(--debug)"></span><div><div class="l">Debug</div><div class="h" data-var="--debug"></div></div></div>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section>
+    <div class="sec-label"><span class="t">Type</span><span class="d">sans for chrome · mono for data</span></div>
+    <div class="type-card">
+      <div class="role">Display · 30 / 680 · -0.025em</div>
+      <div class="specimen-display">RestJobRunner audit console</div>
+      <div class="stack">--sans · ui-sans-serif, system-ui, -apple-system, “Segoe UI”, Roboto…</div>
+    </div>
+    <div class="type-card">
+      <div class="role">Heading · 16 / 650</div>
+      <div class="specimen-h">Newest events arrive at the top</div>
+      <div class="role" style="margin-top:14px">Body · 14 / 400</div>
+      <div class="specimen-body">Filters and search run against the database, so you’re always querying the
+      whole audit table — not just the rows currently on screen.</div>
+    </div>
+    <div class="type-card">
+      <div class="role">Data · mono 13 · tabular-nums</div>
+      <div class="specimen-data">12:04:30  ERROR  Request  POST 500 412ms  run-1003  job-27  w3</div>
+      <div class="stack">--mono · ui-monospace, “SF Mono”, “JetBrains Mono”, Menlo, Consolas…</div>
+    </div>
+  </section>
+
+  <!-- COMPONENTS -->
+  <section>
+    <div class="sec-label"><span class="t">Components</span><span class="d">the vocabulary, live</span></div>
+
+    <div class="panel">
+      <div class="ph">Severity badges</div>
+      <div class="pb"><div class="row-demo">
+        <span class="badge b-Error"><span class="bd"></span>Error</span>
+        <span class="badge b-Warn"><span class="bd"></span>Warn</span>
+        <span class="badge b-Info"><span class="bd"></span>Info</span>
+        <span class="badge b-Debug"><span class="bd"></span>Debug</span>
+      </div></div>
+    </div>
+
+    <div class="panel">
+      <div class="ph">Stat cards</div>
+      <div class="pb"><div class="stats">
+        <div class="stat total"><div class="k">Total matching</div><div class="v">12,481</div></div>
+        <div class="stat error"><div class="k">Errors</div><div class="v">37</div></div>
+        <div class="stat warn"><div class="k">Warnings</div><div class="v">204</div></div>
+        <div class="stat info"><div class="k">Info</div><div class="v">11,902</div></div>
+      </div></div>
+    </div>
+
+    <div class="panel">
+      <div class="ph">Controls</div>
+      <div class="pb"><div class="row-demo">
+        <button class="ctrl"><svg class="ico" viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2.5" width="3.4" height="11" rx="1"/><rect x="9.6" y="2.5" width="3.4" height="11" rx="1"/></svg>Pause</button>
+        <button class="ctrl icon-only" aria-label="theme"><svg class="ico" viewBox="0 0 16 16" fill="currentColor"><path d="M13.4 9.6A5.6 5.6 0 016.4 2.6a5.6 5.6 0 107 7z"/></svg></button>
+        <select class="ctrl"><option>All levels</option></select>
+        <select class="ctrl"><option>All categories</option></select>
+        <div class="search">
+          <svg class="si" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4.5"/><path d="M11 11l3.5 3.5" stroke-linecap="round"/></svg>
+          <input type="search" placeholder="Search message, job, error, URL, status…">
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap">
+        <div><div class="group-title" style="margin:0 0 7px">Refresh progress</div><div class="progress"><div class="fill" id="demoFill"></div></div></div>
+        <div><div class="group-title" style="margin:0 0 7px">Arrivals</div><div class="spark" id="demoSpark"></div></div>
+        <div><div class="group-title" style="margin:0 0 7px">Live indicator</div><span class="live"><span class="dot"></span>LIVE</span></div>
+      </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph">Log rows — severity edge, badge, http chip, monospace time</div>
+      <div class="pb" style="padding:0">
+        <table>
+          <thead><tr><th style="width:92px">Time</th><th style="width:80px">Level</th><th style="width:96px">Category</th><th style="width:210px">Source</th><th style="width:140px">HTTP</th><th>Message</th></tr></thead>
+          <tbody>
+            <tr class="row lvl-Error is-new"><td class="c-time">12:04:30</td><td><span class="badge b-Error"><span class="bd"></span>Error</span></td><td class="src"><span class="meta">Request</span></td><td><div class="src"><span class="nm">make-post</span><span class="meta">Create posts · Sent</span></div></td><td><span class="http"><span class="m">POST</span><span class="sc s5">500</span><span class="dur">412ms</span></span></td><td class="c-msg">POST …/posts failed in 412ms: server returned 500</td></tr>
+            <tr class="row lvl-Warn"><td class="c-time">12:04:29</td><td><span class="badge b-Warn"><span class="bd"></span>Warn</span></td><td class="src"><span class="meta">Retry</span></td><td><div class="src"><span class="nm">list-users</span><span class="meta">step SendRequest · Retrying</span></div></td><td><span class="http"><span class="m">GET</span><span class="sc s4">429</span><span class="dur">88ms</span></span></td><td class="c-msg">retryable: 429. Backing off 2s.</td></tr>
+            <tr class="row lvl-Info"><td class="c-time">12:04:29</td><td><span class="badge b-Info"><span class="bd"></span>Info</span></td><td class="src"><span class="meta">Lifecycle</span></td><td><div class="src"><span class="nm">read-post-1</span><span class="meta">Read posts · Succeeded</span></div></td><td><span style="color:var(--faint)">—</span></td><td class="c-msg">state Running -&gt; Succeeded</td></tr>
+            <tr class="row lvl-Debug"><td class="c-time">12:04:28</td><td><span class="badge b-Debug"><span class="bd"></span>Debug</span></td><td class="src"><span class="meta">Step</span></td><td><div class="src"><span class="nm">read-post-1</span><span class="meta">step BuildRequest</span></div></td><td><span style="color:var(--faint)">—</span></td><td class="c-msg">attempt 1/3 step 'BuildRequest' running</td></tr>
+          </tbody>
+        </table>
+        <div style="padding:0 16px 16px">
+          <div class="kv">
+            <div><div class="pk">AuditId</div><div class="pv">128471</div></div>
+            <div><div class="pk">Run</div><div class="pv">run-1003</div></div>
+            <div><div class="pk">Job</div><div class="pv">job-27 · make-post</div></div>
+            <div><div class="pk">Operation</div><div class="pv">Create posts</div></div>
+            <div><div class="pk">Status code</div><div class="pv">500</div></div>
+            <div><div class="pk">Worker</div><div class="pv">w3 · WRK-03</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOKENS -->
+  <section>
+    <div class="sec-label"><span class="t">Tokens</span><span class="d">copy into your own stylesheet</span></div>
+    <pre class="tokens" id="tokenDump"></pre>
+  </section>
+
+  <footer>RestJobRunner console theme — dark default, light on toggle. Same tokens drive the audit dashboard.</footer>
+</div>
+
+<script>
+"use strict";
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const SUN = '<path d="M8 11.2A3.2 3.2 0 108 4.8a3.2 3.2 0 000 6.4zM8 .9v2M8 13.1v2M.9 8h2M13.1 8h2M2.9 2.9l1.4 1.4M11.7 11.7l1.4 1.4M13.1 2.9l-1.4 1.4M4.3 11.7l-1.4 1.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" fill="none"/>';
+  const MOON = '<path d="M13.4 9.6A5.6 5.6 0 016.4 2.6a5.6 5.6 0 107 7z" fill="currentColor"/>';
+  const theme = () => document.documentElement.getAttribute('data-theme') || 'dark';
+  function setIcon(){ $('themeIco').innerHTML = theme() === 'dark' ? SUN : MOON; }
+
+  // read live hex for every [data-var] element and dump the token list
+  const TOKEN_NAMES = ['--bg','--surface','--surface-2','--elev','--border','--border-soft',
+    '--text','--muted','--faint','--accent','--accent-soft','--err','--warn','--info','--debug',
+    '--err-bg','--warn-bg','--info-bg','--debug-bg'];
+  function readVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function refreshHexes(){
+    document.querySelectorAll('[data-var]').forEach(el => {
+      const name = el.getAttribute('data-var');
+      const val = readVar(name);
+      const out = el.querySelector('.hex') || (el.classList.contains('h') ? el : null);
+      if (el.classList.contains('h')) { el.textContent = val; }
+      else if (out) { out.textContent = val; }
+    });
+    // token dump
+    const lines = [':root {'];
+    for (const n of TOKEN_NAMES) lines.push('  <span class="c">' + n + '</span><span class="k">:</span> ' + readVar(n) + ';');
+    lines.push('}');
+    $('tokenDump').innerHTML = lines.join('\n');
+  }
+
+  function toggle(){
+    const next = theme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('rjr-theme', next); } catch (e) {}
+    setIcon(); refreshHexes();
+  }
+  $('themeBtn').addEventListener('click', toggle);
+  setIcon(); refreshHexes();
+
+  // gentle ambient motion on the sample progress + sparkline (so the theme feels alive)
+  const spark = $('demoSpark');
+  const bars = [];
+  for (let i = 0; i < 22; i++){
+    const b = document.createElement('span');
+    b.className = 'b';
+    const h = 3 + Math.round(Math.abs(Math.sin(i * 0.7)) * 24);
+    b.style.height = h + 'px';
+    if (i === 14 || i === 19) b.className = 'b hot';
+    spark.appendChild(b); bars.push(b);
+  }
+  if (!reduce){
+    let t = 0;
+    setInterval(() => {
+      t += 0.12;
+      const fill = $('demoFill');
+      const pct = (Math.sin(t) * 0.5 + 0.5) * 100;
+      fill.style.width = pct.toFixed(0) + '%';
+    }, 120);
+  }
+})();
+</script>
+</body>
+</html>

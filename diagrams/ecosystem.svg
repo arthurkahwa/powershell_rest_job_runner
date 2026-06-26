@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 300" width="1060" height="300" role="img" aria-label="Ökosystem: Referenzseite rendert die OpenAPI-Spezifikation, die die REST-API beschreibt; Mockoon-Mock implementiert sie; RestJobRunner ruft sie auf">
+  <defs>
+    <style>
+      text{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+      .lbl{font-size:14px;font-weight:650;fill:#0f1720}
+      .lbl-sm{font-size:13px;font-weight:650;fill:#0f1720}
+      .sub{font-size:11px;fill:#5a6b76;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+      .edge-lbl{font-size:11px;fill:#5a6b76}
+      .comp rect{fill:#fff;stroke:#cfd9e0;stroke-width:1.5}
+      .comp .chip{fill:#0f766e}
+      .flow{fill:none;stroke:#9fb0bb;stroke-width:2}
+      .run-node{fill:#fff;stroke:#0f766e!important;stroke-width:2!important}
+      .t-accent{fill:#0b5a54}
+    </style>
+    <marker id="ea" markerWidth="10" markerHeight="10" refX="7.5" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L8.5,4.5 L1,8 Z" fill="#9fb0bb"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="1060" height="300" fill="#e9eef2"/>
+
+  <!-- edges -->
+  <path class="flow" d="M180,86 L180,130" marker-end="url(#ea)"/>
+  <text class="edge-lbl" x="190" y="112">rendert</text>
+  <path class="flow" d="M280,160 L430,165" marker-end="url(#ea)"/>
+  <text class="edge-lbl" x="312" y="150">beschreibt</text>
+  <path class="flow" d="M280,250 C360,250 380,210 440,196" marker-end="url(#ea)"/>
+  <text class="edge-lbl" x="300" y="244">implementiert</text>
+  <path class="flow" d="M800,165 L652,165" marker-end="url(#ea)"/>
+  <text class="edge-lbl" x="676" y="152">ruft auf (CRUD-Jobs)</text>
+
+  <!-- central API -->
+  <g class="comp"><title>Die REST-API — vom Mock implementiert und vom Client konsumiert</title>
+    <rect class="run-node" x="430" y="120" width="220" height="90" rx="12"/>
+    <text class="lbl" x="540" y="152" text-anchor="middle">REST-API</text>
+    <text class="sub t-accent" x="540" y="174" text-anchor="middle">posts · comments · albums</text>
+    <text class="sub t-accent" x="540" y="190" text-anchor="middle">photos · users</text></g>
+
+  <!-- left column -->
+  <g class="comp"><title>openapi.html — rendert die Spezifikation</title>
+    <rect x="80" y="30" width="200" height="56" rx="10"/>
+    <circle class="chip" cx="100" cy="54" r="5"/>
+    <text class="lbl-sm" x="114" y="50">Referenzseite</text>
+    <text class="sub" x="96" y="72">openapi.html</text></g>
+  <g class="comp"><title>openapi.yaml — der OpenAPI-3.0.3-Vertrag</title>
+    <rect x="80" y="130" width="200" height="56" rx="10"/>
+    <circle class="chip" cx="100" cy="154" r="5"/>
+    <text class="lbl-sm" x="114" y="150">OpenAPI-Spezifikation</text>
+    <text class="sub" x="96" y="172">openapi.yaml</text></g>
+  <g class="comp"><title>Mockoon-Umgebung — ein lauffähiger Mock der API mit persistiertem CRUD</title>
+    <rect x="80" y="230" width="200" height="56" rx="10"/>
+    <circle class="chip" cx="100" cy="254" r="5"/>
+    <text class="lbl-sm" x="114" y="250">Mockoon-Mock</text>
+    <text class="sub" x="96" y="272">localhost:3001</text></g>
+
+  <!-- right -->
+  <g class="comp"><title>RestJobRunner — die asynchrone PowerShell-Job-Engine, die die API aufruft</title>
+    <rect x="800" y="120" width="200" height="90" rx="12"/>
+    <circle class="chip" cx="820" cy="148" r="5"/>
+    <text class="lbl" x="834" y="152">RestJobRunner</text>
+    <text class="sub" x="816" y="176">PowerShell-Client ·</text>
+    <text class="sub" x="816" y="192">Store · Queue · Workers</text></g>
+</svg>

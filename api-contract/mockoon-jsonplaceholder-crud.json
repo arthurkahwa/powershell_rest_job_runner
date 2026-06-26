@@ -1,0 +1,252 @@
+{
+  "uuid": "7c709f67-ce67-439b-b416-2a628929c026",
+  "lastMigration": 29,
+  "name": "JSONPlaceholder CRUD Mock",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 3001,
+  "hostname": "",
+  "routes": [
+    {
+      "uuid": "150e89fd-a288-4aba-8d4d-d9ea0449d885",
+      "type": "crud",
+      "documentation": "Full CRUD for /posts (list, read, create, update, patch, delete)",
+      "method": "get",
+      "endpoint": "posts",
+      "responses": [
+        {
+          "uuid": "e375f15e-9bff-4aa7-bac2-e986fafb96c1",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "DATABUCKET",
+          "filePath": "",
+          "databucketID": "dbposts",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "13d0d502-e0f3-4902-a4ee-75c42033f00c",
+      "type": "crud",
+      "documentation": "Full CRUD for /comments (list, read, create, update, patch, delete)",
+      "method": "get",
+      "endpoint": "comments",
+      "responses": [
+        {
+          "uuid": "67e7aa8f-0d73-4063-9279-208214e8e5e5",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "DATABUCKET",
+          "filePath": "",
+          "databucketID": "dbcomments",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "c2970492-088b-4c2d-9c75-96100f2a9d5d",
+      "type": "crud",
+      "documentation": "Full CRUD for /albums (list, read, create, update, patch, delete)",
+      "method": "get",
+      "endpoint": "albums",
+      "responses": [
+        {
+          "uuid": "1f51aa94-f140-4831-95b9-02a854e72158",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "DATABUCKET",
+          "filePath": "",
+          "databucketID": "dbalbums",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "57d52793-7fac-4786-88ea-4361d3ec3882",
+      "type": "crud",
+      "documentation": "Full CRUD for /photos (list, read, create, update, patch, delete)",
+      "method": "get",
+      "endpoint": "photos",
+      "responses": [
+        {
+          "uuid": "41ac628e-626b-4c32-a69d-8344cde6c39b",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "DATABUCKET",
+          "filePath": "",
+          "databucketID": "dbphotos",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "2b6f1bea-6691-4eb9-bb17-75ec5e55e49a",
+      "type": "crud",
+      "documentation": "Full CRUD for /users (list, read, create, update, patch, delete)",
+      "method": "get",
+      "endpoint": "users",
+      "responses": [
+        {
+          "uuid": "5384e485-c7fd-4b57-bed3-31c33bdd7499",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "DATABUCKET",
+          "filePath": "",
+          "databucketID": "dbusers",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [
+    {
+      "uuid": "34422408-a54b-426d-9a1a-bdc5a94c5ce1",
+      "id": "dbposts",
+      "name": "posts",
+      "documentation": "Seed data for /posts",
+      "value": "[\n  {\n    \"id\": 1,\n    \"userId\": 1,\n    \"title\": \"sunt aut facere repellat provident\",\n    \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita\"\n  },\n  {\n    \"id\": 2,\n    \"userId\": 1,\n    \"title\": \"qui est esse\",\n    \"body\": \"est rerum tempore vitae\\nsequi sint nihil reprehenderit\"\n  },\n  {\n    \"id\": 3,\n    \"userId\": 1,\n    \"title\": \"ea molestias quasi exercitationem\",\n    \"body\": \"et iusto sed quo iure\\nvoluptatem occaecati omnis eligendi\"\n  },\n  {\n    \"id\": 4,\n    \"userId\": 2,\n    \"title\": \"eum et est occaecati\",\n    \"body\": \"ullam et saepe reiciendis voluptatem adipisci\\nsit amet autem\"\n  },\n  {\n    \"id\": 5,\n    \"userId\": 2,\n    \"title\": \"nesciunt quas odio\",\n    \"body\": \"repudiandae veniam quaerat sunt sed\\nalias aut fugiat sit autem\"\n  },\n  {\n    \"id\": 6,\n    \"userId\": 3,\n    \"title\": \"dolorem eum magni eos aperiam quia\",\n    \"body\": \"ut aspernatur corporis harum nihil quis provident sequi\"\n  },\n  {\n    \"id\": 7,\n    \"userId\": 3,\n    \"title\": \"magnam facilis autem\",\n    \"body\": \"dolore placeat quaerat ex qui aut porro deleniti\"\n  },\n  {\n    \"id\": 8,\n    \"userId\": 4,\n    \"title\": \"dolorem dolore est ipsam\",\n    \"body\": \"dignissimos aperiam dolorem qui eum facilis quibusdam\"\n  },\n  {\n    \"id\": 9,\n    \"userId\": 5,\n    \"title\": \"nesciunt iure omnis dolorem tempora\",\n    \"body\": \"consectetur animi nesciunt iure dolore enim quia ad\"\n  },\n  {\n    \"id\": 10,\n    \"userId\": 5,\n    \"title\": \"optio molestias id quia eum\",\n    \"body\": \"quo et expedita modi cum officia vel magni doloribus\"\n  }\n]"
+    },
+    {
+      "uuid": "3cc316ba-1b5a-49ae-a202-1872e21f94f4",
+      "id": "dbcomments",
+      "name": "comments",
+      "documentation": "Seed data for /comments",
+      "value": "[\n  {\n    \"id\": 1,\n    \"postId\": 1,\n    \"name\": \"id labore ex et quam laborum\",\n    \"email\": \"[email protected]\",\n    \"body\": \"laudantium enim quasi est quidem magnam\"\n  },\n  {\n    \"id\": 2,\n    \"postId\": 1,\n    \"name\": \"quo vero reiciendis velit similique earum\",\n    \"email\": \"[email protected]\",\n    \"body\": \"est natus enim nihil est dolore omnis\"\n  },\n  {\n    \"id\": 3,\n    \"postId\": 1,\n    \"name\": \"odio adipisci rerum aut animi\",\n    \"email\": \"[email protected]\",\n    \"body\": \"quia molestiae reprehenderit quasi aspernatur\"\n  },\n  {\n    \"id\": 4,\n    \"postId\": 1,\n    \"name\": \"alias odio sit\",\n    \"email\": \"[email protected]\",\n    \"body\": \"non et atque occaecati deserunt quas accusantium\"\n  },\n  {\n    \"id\": 5,\n    \"postId\": 1,\n    \"name\": \"vero eaque aliquid doloribus et culpa\",\n    \"email\": \"[email protected]\",\n    \"body\": \"harum non quasi et ratione tempore iure\"\n  },\n  {\n    \"id\": 6,\n    \"postId\": 2,\n    \"name\": \"et fugit eligendi deleniti\",\n    \"email\": \"[email protected]\",\n    \"body\": \"doloribus at sed quis culpa deserunt consectetur\"\n  },\n  {\n    \"id\": 7,\n    \"postId\": 2,\n    \"name\": \"repellat consequatur praesentium\",\n    \"email\": \"[email protected]\",\n    \"body\": \"maiores sed dolores similique labore et inventore\"\n  },\n  {\n    \"id\": 8,\n    \"postId\": 3,\n    \"name\": \"et omnis dolorem\",\n    \"email\": \"[email protected]\",\n    \"body\": \"ut voluptatem corrupti velit ad voluptatem maiores\"\n  },\n  {\n    \"id\": 9,\n    \"postId\": 3,\n    \"name\": \"provident id voluptas\",\n    \"email\": \"[email protected]\",\n    \"body\": \"sapiente assumenda molestiae atque adipisci laborum\"\n  },\n  {\n    \"id\": 10,\n    \"postId\": 4,\n    \"name\": \"eaque et deleniti atque tenetur\",\n    \"email\": \"[email protected]\",\n    \"body\": \"voluptate iusto quis nobis reprehenderit\"\n  }\n]"
+    },
+    {
+      "uuid": "d51390d0-7674-4949-b901-f460d47c062e",
+      "id": "dbalbums",
+      "name": "albums",
+      "documentation": "Seed data for /albums",
+      "value": "[\n  {\n    \"id\": 1,\n    \"userId\": 1,\n    \"title\": \"quidem molestiae enim\"\n  },\n  {\n    \"id\": 2,\n    \"userId\": 1,\n    \"title\": \"sunt qui excepturi placeat culpa\"\n  },\n  {\n    \"id\": 3,\n    \"userId\": 2,\n    \"title\": \"omnis laborum odio\"\n  },\n  {\n    \"id\": 4,\n    \"userId\": 3,\n    \"title\": \"non esse culpa molestiae omnis sed optio\"\n  },\n  {\n    \"id\": 5,\n    \"userId\": 4,\n    \"title\": \"eaque aut omnis a\"\n  }\n]"
+    },
+    {
+      "uuid": "fc550c67-06cf-4a37-9ab6-1a61aa415058",
+      "id": "dbphotos",
+      "name": "photos",
+      "documentation": "Seed data for /photos",
+      "value": "[\n  {\n    \"id\": 1,\n    \"albumId\": 2,\n    \"title\": \"accusamus beatae ad facilis cum similique\",\n    \"url\": \"https://via.placeholder.com/600/92c952\",\n    \"thumbnailUrl\": \"https://via.placeholder.com/150/92c952\"\n  },\n  {\n    \"id\": 2,\n    \"albumId\": 2,\n    \"title\": \"reprehenderit est deserunt velit ipsam\",\n    \"url\": \"https://via.placeholder.com/600/771796\",\n    \"thumbnailUrl\": \"https://via.placeholder.com/150/771796\"\n  },\n  {\n    \"id\": 3,\n    \"albumId\": 2,\n    \"title\": \"officia porro iure quia iusto qui ipsa ut modi\",\n    \"url\": \"https://via.placeholder.com/600/24f355\",\n    \"thumbnailUrl\": \"https://via.placeholder.com/150/24f355\"\n  },\n  {\n    \"id\": 4,\n    \"albumId\": 1,\n    \"title\": \"culpa odio esse rerum omnis laboriosam voluptate\",\n    \"url\": \"https://via.placeholder.com/600/d32776\",\n    \"thumbnailUrl\": \"https://via.placeholder.com/150/d32776\"\n  },\n  {\n    \"id\": 5,\n    \"albumId\": 1,\n    \"title\": \"natus nisi omnis corporis facere molestiae\",\n    \"url\": \"https://via.placeholder.com/600/f66b97\",\n    \"thumbnailUrl\": \"https://via.placeholder.com/150/f66b97\"\n  },\n  {\n    \"id\": 6,\n    \"albumId\": 1,\n    \"title\": \"accusamus ea aliquid et amet sequi nemo\",\n    \"url\": \"https://via.placeholder.com/600/56a8c2\",\n    \"thumbnailUrl\": \"https://via.placeholder.com/150/56a8c2\"\n  },\n  {\n    \"id\": 7,\n    \"albumId\": 3,\n    \"title\": \"officia delectus consequatur vero aut veniam\",\n    \"url\": \"https://via.placeholder.com/600/b0f7cc\",\n    \"thumbnailUrl\": \"https://via.placeholder.com/150/b0f7cc\"\n  },\n  {\n    \"id\": 8,\n    \"albumId\": 3,\n    \"title\": \"aut porro officiis laborum odit ea laudantium\",\n    \"url\": \"https://via.placeholder.com/600/54176f\",\n    \"thumbnailUrl\": \"https://via.placeholder.com/150/54176f\"\n  }\n]"
+    },
+    {
+      "uuid": "70ae71aa-3e54-4f29-9902-051518b4359c",
+      "id": "dbusers",
+      "name": "users",
+      "documentation": "Seed data for /users",
+      "value": "[\n  {\n    \"id\": 1,\n    \"name\": \"Leanne Graham\",\n    \"username\": \"Bret\",\n    \"email\": \"[email protected]\",\n    \"address\": {\n      \"street\": \"Kulas Light\",\n      \"suite\": \"Apt. 556\",\n      \"city\": \"Gwenborough\",\n      \"zipcode\": \"92998-3874\",\n      \"geo\": {\n        \"lat\": \"-37.3159\",\n        \"lng\": \"81.1496\"\n      }\n    },\n    \"phone\": \"1-770-736-8031 x56442\",\n    \"website\": \"hildegard.org\",\n    \"company\": {\n      \"name\": \"Romaguera-Crona\",\n      \"catchPhrase\": \"Multi-layered client-server neural-net\",\n      \"bs\": \"harness real-time e-markets\"\n    }\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Ervin Howell\",\n    \"username\": \"Antonette\",\n    \"email\": \"[email protected]\",\n    \"address\": {\n      \"street\": \"Victor Plains\",\n      \"suite\": \"Suite 879\",\n      \"city\": \"Wisokyburgh\",\n      \"zipcode\": \"90566-7771\",\n      \"geo\": {\n        \"lat\": \"-43.9509\",\n        \"lng\": \"-34.4618\"\n      }\n    },\n    \"phone\": \"010-692-6593 x09125\",\n    \"website\": \"anastasia.net\",\n    \"company\": {\n      \"name\": \"Deckow-Crist\",\n      \"catchPhrase\": \"Proactive didactic contingency\",\n      \"bs\": \"synergize scalable supply-chains\"\n    }\n  },\n  {\n    \"id\": 3,\n    \"name\": \"Clementine Bauch\",\n    \"username\": \"Samantha\",\n    \"email\": \"[email protected]\",\n    \"address\": {\n      \"street\": \"Douglas Extension\",\n      \"suite\": \"Suite 847\",\n      \"city\": \"McKenziehaven\",\n      \"zipcode\": \"59590-4157\",\n      \"geo\": {\n        \"lat\": \"-68.6102\",\n        \"lng\": \"-47.0653\"\n      }\n    },\n    \"phone\": \"1-463-123-4447\",\n    \"website\": \"ramiro.info\",\n    \"company\": {\n      \"name\": \"Romaguera-Jacobson\",\n      \"catchPhrase\": \"Face to face bifurcated interface\",\n      \"bs\": \"e-enable strategic applications\"\n    }\n  },\n  {\n    \"id\": 4,\n    \"name\": \"Patricia Lebsack\",\n    \"username\": \"Karianne\",\n    \"email\": \"[email protected]\",\n    \"address\": {\n      \"street\": \"Hoeger Mall\",\n      \"suite\": \"Apt. 692\",\n      \"city\": \"South Elvis\",\n      \"zipcode\": \"53919-4257\",\n      \"geo\": {\n        \"lat\": \"29.4572\",\n        \"lng\": \"-164.2990\"\n      }\n    },\n    \"phone\": \"493-170-9623 x156\",\n    \"website\": \"kale.biz\",\n    \"company\": {\n      \"name\": \"Robel-Corkery\",\n      \"catchPhrase\": \"Multi-tiered zero tolerance productivity\",\n      \"bs\": \"transition cutting-edge web services\"\n    }\n  },\n  {\n    \"id\": 5,\n    \"name\": \"Chelsey Dietrich\",\n    \"username\": \"Kamren\",\n    \"email\": \"[email protected]\",\n    \"address\": {\n      \"street\": \"Skiles Walks\",\n      \"suite\": \"Suite 351\",\n      \"city\": \"Roscoeview\",\n      \"zipcode\": \"33263\",\n      \"geo\": {\n        \"lat\": \"-31.8129\",\n        \"lng\": \"62.5342\"\n      }\n    },\n    \"phone\": \"(254)954-1289\",\n    \"website\": \"demarco.info\",\n    \"company\": {\n      \"name\": \"Keebler LLC\",\n      \"catchPhrase\": \"User-centric fault-tolerant solution\",\n      \"bs\": \"revolutionize end-to-end systems\"\n    }\n  }\n]"
+    }
+  ],
+  "folders": [],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "150e89fd-a288-4aba-8d4d-d9ea0449d885"
+    },
+    {
+      "type": "route",
+      "uuid": "13d0d502-e0f3-4902-a4ee-75c42033f00c"
+    },
+    {
+      "type": "route",
+      "uuid": "c2970492-088b-4c2d-9c75-96100f2a9d5d"
+    },
+    {
+      "type": "route",
+      "uuid": "57d52793-7fac-4786-88ea-4361d3ec3882"
+    },
+    {
+      "type": "route",
+      "uuid": "2b6f1bea-6691-4eb9-bb17-75ec5e55e49a"
+    }
+  ]
+}
